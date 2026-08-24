@@ -9,6 +9,7 @@ import { generateId, formatDate, formatTime, formatDateTime, timeAgo, elapsedTim
 import { showToast } from './utils/toast.js';
 import { CATEGORIES, TAX_RATE, ORDER_STATUS, PAYMENT_STATUS, TABLE_STATUS, ORDER_TYPE, PAYMENT_METHOD } from './data/constants.js';
 import { revenueChartData, popularItemsData, orderTypeData, hourlyRevenueData } from './data/mockData.js';
+import { REPOSITORY_INFO, RELEASES_DATA } from './data/versionHistoryData.js';
 
 // Expose orderCalc globally for store usage
 window._orderCalc = { calculateOrder };
@@ -62,6 +63,14 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
   receipt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg>',
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+  gitCommit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/></svg>',
+  gitBranch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>',
+  tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l11 11 10-10L12 2z"/><circle cx="7" cy="7" r="1.5"/></svg>',
+  github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>',
+  externalLink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
 };
 
 function icon(name, size = 20) {
@@ -85,6 +94,7 @@ const routes = {
   inventory: { title: 'Inventory', render: renderInventory },
   staff: { title: 'Staff Management', render: renderStaff },
   settings: { title: 'Settings', render: renderSettings },
+  versionHistory: { title: 'Version History & System Releases', render: renderVersionHistory },
 };
 
 let currentRoute = 'login';
@@ -148,6 +158,7 @@ function renderAppShell(container, route) {
         ${sidebarItem('inventory', 'Inventory', 'package', route)}
         ${sidebarItem('staff', 'Staff', 'userCog', route)}
         ${sidebarItem('settings', 'Settings', 'settings', route)}
+        ${sidebarItem('versionHistory', 'Version History', 'gitCommit', route)}
       </div>
       <div class="sidebar-footer">
         ${sidebarItem('help', 'Help & Support', 'helpCircle', route)}
@@ -1731,6 +1742,307 @@ function renderSettings(container) {
       showToast('Settings section: ' + el.textContent.trim(), 'info');
     });
   });
+}
+
+// ==========================================
+// Version History & GitHub Releases View
+// ==========================================
+let versionHistoryFilter = 'all';
+let versionHistorySearch = '';
+
+function renderVersionHistory(container) {
+  const filteredReleases = RELEASES_DATA.filter(rel => {
+    const matchesSearch = !versionHistorySearch || 
+      rel.title.toLowerCase().includes(versionHistorySearch.toLowerCase()) ||
+      rel.version.toLowerCase().includes(versionHistorySearch.toLowerCase()) ||
+      rel.summary.toLowerCase().includes(versionHistorySearch.toLowerCase()) ||
+      rel.commits.some(c => c.message.toLowerCase().includes(versionHistorySearch.toLowerCase()) || c.sha.includes(versionHistorySearch.toLowerCase()));
+
+    if (!matchesSearch) return false;
+
+    if (versionHistoryFilter === 'all') return true;
+    if (versionHistoryFilter === 'latest') return rel.isLatest;
+    if (versionHistoryFilter === 'v1.2') return rel.version.startsWith('v1.2');
+    if (versionHistoryFilter === 'v1.1') return rel.version.startsWith('v1.1');
+    if (versionHistoryFilter === 'v1.0') return rel.version.startsWith('v1.0');
+    return true;
+  });
+
+  container.innerHTML = `
+    <div class="version-history-container">
+      <!-- Repo Info Banner -->
+      <div class="vh-repo-card">
+        <div class="vh-repo-header">
+          <div class="vh-repo-title">
+            <span class="icon" style="color:var(--color-primary)">${icon('github', 28)}</span>
+            <div>
+              <h2>${REPOSITORY_INFO.fullName} <span class="vh-repo-visibility">Public POS Engine</span></h2>
+              <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-top:2px">
+                Branch: <code>${REPOSITORY_INFO.branch}</code> • License: <strong>${REPOSITORY_INFO.license}</strong> • Latest Release: <strong>${REPOSITORY_INFO.latestVersion}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="vh-repo-actions">
+            <a href="${REPOSITORY_INFO.url}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:6px">
+              ${icon('github', 16)} GitHub Repository ${icon('externalLink', 14)}
+            </a>
+            <button class="btn btn-primary btn-sm" id="vhBranchBtn" style="display:inline-flex;align-items:center;gap:6px">
+              ${icon('gitBranch', 16)} Branch: main
+            </button>
+          </div>
+        </div>
+
+        <div class="vh-stats-grid">
+          <div class="vh-stat-item">
+            <div class="vh-stat-icon">${icon('gitCommit', 18)}</div>
+            <div class="vh-stat-info">
+              <span class="vh-stat-label">Total Commits</span>
+              <span class="vh-stat-value">${REPOSITORY_INFO.totalCommits}</span>
+            </div>
+          </div>
+          <div class="vh-stat-item">
+            <div class="vh-stat-icon">${icon('tag', 18)}</div>
+            <div class="vh-stat-info">
+              <span class="vh-stat-label">Releases</span>
+              <span class="vh-stat-value">${REPOSITORY_INFO.totalReleases}</span>
+            </div>
+          </div>
+          <div class="vh-stat-item">
+            <div class="vh-stat-icon">${icon('users', 18)}</div>
+            <div class="vh-stat-info">
+              <span class="vh-stat-label">Contributors</span>
+              <span class="vh-stat-value">${REPOSITORY_INFO.totalContributors}</span>
+            </div>
+          </div>
+          <div class="vh-stat-item">
+            <div class="vh-stat-icon">${icon('checkCircle', 18)}</div>
+            <div class="vh-stat-info">
+              <span class="vh-stat-label">Build Status</span>
+              <span class="vh-stat-value" style="color:var(--color-success)">Passing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls: Filter Tabs & Search -->
+      <div class="vh-controls-bar">
+        <div class="vh-search-box">
+          <span class="vh-search-icon">${icon('search', 16)}</span>
+          <input type="text" id="vhSearchInput" placeholder="Search releases, commits, SHA or features..." value="${escapeHtml(versionHistorySearch)}">
+        </div>
+        <div class="vh-filter-tabs">
+          <button class="vh-tab-btn ${versionHistoryFilter === 'all' ? 'active' : ''}" data-filter="all">All Releases (${RELEASES_DATA.length})</button>
+          <button class="vh-tab-btn ${versionHistoryFilter === 'latest' ? 'active' : ''}" data-filter="latest">Latest Tag</button>
+          <button class="vh-tab-btn ${versionHistoryFilter === 'v1.2' ? 'active' : ''}" data-filter="v1.2">v1.2.0</button>
+          <button class="vh-tab-btn ${versionHistoryFilter === 'v1.1' ? 'active' : ''}" data-filter="v1.1">v1.1.0</button>
+          <button class="vh-tab-btn ${versionHistoryFilter === 'v1.0' ? 'active' : ''}" data-filter="v1.0">v1.0.0</button>
+        </div>
+      </div>
+
+      <!-- GitHub Timeline -->
+      <div class="vh-timeline">
+        ${filteredReleases.length === 0 ? `
+          <div class="vh-empty-state">
+            <h3>No releases found</h3>
+            <p>No commits or releases match your search query "${escapeHtml(versionHistorySearch)}".</p>
+          </div>
+        ` : filteredReleases.map(rel => `
+          <div class="vh-release-item ${rel.isLatest ? 'latest' : ''}">
+            <div class="vh-timeline-node">
+              ${icon(rel.isLatest ? 'tag' : 'gitCommit', 14)}
+            </div>
+            <div class="vh-release-card">
+              <div class="vh-release-header">
+                <div class="vh-release-meta-main">
+                  <div class="vh-tag-row">
+                    <span class="vh-version-tag">${icon('tag', 14)} ${rel.version}</span>
+                    <span class="vh-badge ${rel.tagColor}">${rel.tagType}</span>
+                  </div>
+                  <h3 class="vh-release-title">${escapeHtml(rel.title)}</h3>
+                  <div class="vh-author-meta">
+                    <img class="vh-author-avatar" src="${rel.author.avatar}" alt="${rel.author.name}">
+                    <span><strong>${escapeHtml(rel.author.name)}</strong> (@${rel.author.username}) released this</span>
+                    <span class="vh-pub-date">• ${formatDate(rel.publishedAt)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="vh-release-body">
+                <p class="vh-release-summary">${escapeHtml(rel.summary)}</p>
+
+                ${rel.highlights && rel.highlights.length > 0 ? `
+                  <div class="vh-highlights-box">
+                    <h4>Key Highlights</h4>
+                    <ul class="vh-highlights-list">
+                      ${rel.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+
+                <div class="vh-changelog-sections">
+                  ${rel.changelog.features.length > 0 ? `
+                    <div class="vh-section-block">
+                      <h4>${icon('plus', 14)} New Features</h4>
+                      <ul class="vh-bullet-list">
+                        ${rel.changelog.features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+
+                  ${rel.changelog.improvements.length > 0 ? `
+                    <div class="vh-section-block">
+                      <h4>${icon('trendingUp', 14)} Improvements</h4>
+                      <ul class="vh-bullet-list">
+                        ${rel.changelog.improvements.map(imp => `<li>${escapeHtml(imp)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+
+                  ${rel.changelog.fixes.length > 0 ? `
+                    <div class="vh-section-block">
+                      <h4>${icon('checkCircle', 14)} Bug Fixes</h4>
+                      <ul class="vh-bullet-list">
+                        ${rel.changelog.fixes.map(fix => `<li>${escapeHtml(fix)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Commits List Table -->
+                <div class="vh-commits-section">
+                  <div class="vh-commits-title">
+                    <span>Commits included in ${rel.version} (${rel.commits.length})</span>
+                    <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Click SHA to view code diff</span>
+                  </div>
+                  <div class="vh-commit-list">
+                    ${rel.commits.map(c => `
+                      <div class="vh-commit-row">
+                        <div class="vh-commit-msg-wrap">
+                          <span class="vh-commit-icon">${icon('gitCommit', 16)}</span>
+                          <span class="vh-commit-msg">${escapeHtml(c.message)}</span>
+                        </div>
+                        <div class="vh-commit-meta">
+                          <span class="vh-commit-author">${c.author} • ${c.date}</span>
+                          <span class="vh-diff-badge">
+                            <span class="vh-additions">+${c.additions}</span>
+                            <span class="vh-deletions">-${c.deletions}</span>
+                          </span>
+                          <button class="vh-sha-btn" data-sha="${c.sha}" title="View commit diff for ${c.sha}">
+                            ${icon('code', 12)} ${c.sha}
+                          </button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Bind event handlers
+  const searchInput = container.querySelector('#vhSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce((e) => {
+      versionHistorySearch = e.target.value;
+      renderVersionHistory(container);
+    }, 250));
+  }
+
+  container.querySelectorAll('.vh-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      versionHistoryFilter = btn.dataset.filter;
+      renderVersionHistory(container);
+    });
+  });
+
+  container.querySelectorAll('.vh-sha-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sha = btn.dataset.sha;
+      const commit = findCommitBySha(sha);
+      if (commit) {
+        showCommitDiffModal(commit);
+      }
+    });
+  });
+
+  container.querySelector('#vhBranchBtn')?.addEventListener('click', () => {
+    showToast('Branch main is up-to-date with origin/main', 'info');
+  });
+}
+
+function findCommitBySha(sha) {
+  for (const rel of RELEASES_DATA) {
+    const found = rel.commits.find(c => c.sha === sha);
+    if (found) return found;
+  }
+  return null;
+}
+
+function showCommitDiffModal(commit) {
+  const content = `
+    <div class="vh-diff-modal">
+      <div class="vh-diff-header-info">
+        <div style="font-weight:var(--font-weight-bold);font-size:var(--font-size-md);color:var(--color-text-primary)">
+          ${escapeHtml(commit.message)}
+        </div>
+        <div class="vh-diff-sha-full">
+          Commit SHA: <code>${commit.fullSha}</code>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;font-size:var(--font-size-xs);color:var(--color-text-secondary)">
+          <span>Author: <strong>${commit.author}</strong> (@${commit.username}) • ${commit.date}</span>
+          <span class="vh-diff-badge">
+            <span class="vh-additions">+${commit.additions} lines</span>
+            <span class="vh-deletions">-${commit.deletions} lines</span>
+            <button class="btn btn-ghost btn-sm" id="copyShaBtn" style="padding:2px 6px;margin-left:6px" title="Copy SHA to clipboard">
+              ${icon('copy', 12)} Copy SHA
+            </button>
+          </span>
+        </div>
+      </div>
+
+      <div class="vh-diff-files-title">Files Changed (${commit.filesChanged.length})</div>
+
+      ${commit.filesChanged.map(f => `
+        <div class="vh-file-diff-card">
+          <div class="vh-file-diff-header">
+            <span>📄 ${f.name}</span>
+            <span>
+              <span class="vh-additions">+${f.additions}</span>
+              <span class="vh-deletions">-${f.deletions}</span>
+              <span style="opacity:0.6;margin-left:8px">${f.status}</span>
+            </span>
+          </div>
+          <div class="vh-diff-code-body">${formatDiffSummary(commit.diffSummary)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  showModal(`Commit Inspector: ${commit.sha}`, content);
+
+  document.getElementById('copyShaBtn')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(commit.fullSha).then(() => {
+      showToast(`Copied commit SHA ${commit.sha} to clipboard`, 'success');
+    }).catch(() => {
+      showToast(`SHA: ${commit.sha}`, 'info');
+    });
+  });
+}
+
+function formatDiffSummary(summary) {
+  if (!summary) return 'No diff detail available';
+  return summary.split('\n').map(line => {
+    if (line.startsWith('+')) {
+      return `<div class="vh-diff-line-add">${escapeHtml(line)}</div>`;
+    } else if (line.startsWith('-')) {
+      return `<div class="vh-diff-line-del">${escapeHtml(line)}</div>`;
+    }
+    return `<div>${escapeHtml(line)}</div>`;
+  }).join('');
 }
 
 // ==========================================
