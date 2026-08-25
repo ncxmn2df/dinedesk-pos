@@ -1,122 +1,358 @@
 /* ==========================================
-   DineDesk Design Tokens
-   Source of Truth: Figma Design File
+   DineDesk Design Token System
+   Theme: Google Material 3 / Material X Trending
+   (Electric Iris / Ultramarine Indigo)
+   Source of Truth — All colors, typography,
+   spacing, and visual properties.
    ========================================== */
 
-:root {
-  /* ---- Colors ---- */
-  --color-primary: #15803D;
-  --color-primary-light: #22C55E;
-  --color-primary-lighter: #DCFCE7;
-  --color-primary-dark: #166534;
-  --color-primary-bg: rgba(21, 128, 61, 0.08);
+/* ============================================
+   LIGHT THEME (default)
+   ============================================ */
+:root,
+[data-theme="light"] {
+  /* ---- Brand / Primary (Material 3 Trending Indigo/Iris) ---- */
+  --dd-primary: #4F46E5;
+  --dd-primary-hover: #4338CA;
+  --dd-primary-soft: rgba(79, 70, 229, 0.08);
+  --dd-primary-lighter: #EEF2FF;
+  --dd-primary-light: #6366F1;
+  --dd-primary-dark: #312E81;
 
-  --color-background: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F1F5F9;
-  --color-border: #E5E7EB;
-  --color-border-light: #F3F4F6;
+  /* ---- Backgrounds ---- */
+  --dd-bg: #F8FAFC;
+  --dd-surface: #FFFFFF;
+  --dd-surface-hover: #F1F5F9;
+  --dd-surface-muted: #F8FAFC;
 
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-tertiary: #9CA3AF;
-  --color-text-inverse: #FFFFFF;
-  --color-text-link: #15803D;
+  /* ---- Text ---- */
+  --dd-text: #0F172A;
+  --dd-text-secondary: #64748B;
+  --dd-text-muted: #94A3B8;
+  --dd-text-inverse: #FFFFFF;
+  --dd-text-link: #4F46E5;
 
-  --color-success: #22C55E;
-  --color-success-bg: #F0FDF4;
-  --color-success-border: #BBF7D0;
-  --color-warning: #F59E0B;
-  --color-warning-bg: #FFFBEB;
-  --color-warning-border: #FDE68A;
-  --color-error: #EF4444;
-  --color-error-bg: #FEF2F2;
-  --color-error-border: #FECACA;
-  --color-info: #3B82F6;
-  --color-info-bg: #EFF6FF;
-  --color-info-border: #BFDBFE;
+  /* ---- Borders ---- */
+  --dd-border: #E2E8F0;
+  --dd-border-strong: #CBD5E1;
+  --dd-border-light: #F1F5F9;
 
-  /* Sidebar */
-  --color-sidebar: #0D2C1F;
-  --color-sidebar-hover: #143D2B;
-  --color-sidebar-active: rgba(34, 197, 94, 0.15);
-  --color-sidebar-text: rgba(255, 255, 255, 0.7);
-  --color-sidebar-text-active: #FFFFFF;
-  --color-sidebar-border: rgba(255, 255, 255, 0.08);
+  /* ---- Semantic Status (Universal Meaning) ---- */
+  --dd-success: #10B981;
+  --dd-success-soft: #ECFDF5;
+  --dd-success-border: #A7F3D0;
+  --dd-success-text: #065F46;
 
-  /* ---- Typography ---- */
-  --font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-size-xs: 11px;
-  --font-size-sm: 12px;
-  --font-size-base: 14px;
-  --font-size-md: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
-  --font-size-4xl: 36px;
+  --dd-warning: #F59E0B;
+  --dd-warning-soft: #FFFBEB;
+  --dd-warning-border: #FDE68A;
+  --dd-warning-text: #92400E;
 
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --dd-error: #EF4444;
+  --dd-error-soft: #FEF2F2;
+  --dd-error-border: #FECACA;
+  --dd-error-text: #991B1B;
 
-  --line-height-tight: 1.2;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.65;
+  --dd-info: #0284C7;
+  --dd-info-soft: #F0F9FF;
+  --dd-info-border: #BAE6FD;
+  --dd-info-text: #075985;
 
-  /* ---- Spacing ---- */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-
-  /* ---- Border Radius ---- */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-full: 9999px;
+  /* ---- Sidebar (Deep Twilight Slate/Indigo) ---- */
+  --dd-sidebar: #0C0E17;
+  --dd-sidebar-hover: #181C2D;
+  --dd-sidebar-active: rgba(99, 102, 241, 0.16);
+  --dd-sidebar-text: rgba(255, 255, 255, 0.65);
+  --dd-sidebar-text-active: #FFFFFF;
+  --dd-sidebar-border: rgba(255, 255, 255, 0.07);
+  --dd-sidebar-section: rgba(255, 255, 255, 0.38);
 
   /* ---- Shadows ---- */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-dropdown: 0 4px 24px rgba(0, 0, 0, 0.12);
+  --dd-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --dd-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --dd-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --dd-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.07), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --dd-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.09), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+  --dd-shadow-dropdown: 0 4px 24px rgba(15, 23, 42, 0.12);
 
-  /* ---- Z-Index ---- */
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-sidebar: 300;
-  --z-overlay: 400;
-  --z-modal: 500;
-  --z-toast: 600;
-  --z-tooltip: 700;
-
-  /* ---- Transitions ---- */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
-  --transition-sidebar: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* ---- Layout ---- */
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 72px;
-  --header-height: 64px;
-  --content-max-width: 1440px;
+  /* ---- Chart Colors ---- */
+  --dd-chart-1: #6366F1;
+  --dd-chart-2: #0EA5E9;
+  --dd-chart-3: #F59E0B;
+  --dd-chart-4: #EF4444;
+  --dd-chart-5: #8B5CF6;
+  --dd-chart-grid: rgba(15, 23, 42, 0.05);
+  --dd-chart-text: #94A3B8;
 }
 
+/* ============================================
+   DARK THEME (Material 3 Dark Slate/Iris)
+   ============================================ */
+[data-theme="dark"] {
+  /* ---- Brand / Primary ---- */
+  --dd-primary: #818CF8;
+  --dd-primary-hover: #6366F1;
+  --dd-primary-soft: rgba(129, 140, 248, 0.12);
+  --dd-primary-lighter: rgba(129, 140, 248, 0.18);
+  --dd-primary-light: #A5B4FC;
+  --dd-primary-dark: #C7D2FE;
+
+  /* ---- Backgrounds ---- */
+  --dd-bg: #080A10;
+  --dd-surface: #111420;
+  --dd-surface-hover: #1A1F30;
+  --dd-surface-muted: #0D101A;
+
+  /* ---- Text ---- */
+  --dd-text: #F8FAFC;
+  --dd-text-secondary: #94A3B8;
+  --dd-text-muted: #64748B;
+  --dd-text-inverse: #0F172A;
+  --dd-text-link: #818CF8;
+
+  /* ---- Borders ---- */
+  --dd-border: #22273A;
+  --dd-border-strong: #333B56;
+  --dd-border-light: #171B2A;
+
+  /* ---- Semantic Status ---- */
+  --dd-success: #34D399;
+  --dd-success-soft: rgba(52, 211, 153, 0.12);
+  --dd-success-border: rgba(52, 211, 153, 0.24);
+  --dd-success-text: #6EE7B7;
+
+  --dd-warning: #FBBF24;
+  --dd-warning-soft: rgba(251, 191, 36, 0.12);
+  --dd-warning-border: rgba(251, 191, 36, 0.24);
+  --dd-warning-text: #FDE68A;
+
+  --dd-error: #F87171;
+  --dd-error-soft: rgba(248, 113, 113, 0.12);
+  --dd-error-border: rgba(248, 113, 113, 0.24);
+  --dd-error-text: #FCA5A5;
+
+  --dd-info: #38BDF8;
+  --dd-info-soft: rgba(56, 189, 248, 0.12);
+  --dd-info-border: rgba(56, 189, 248, 0.24);
+  --dd-info-text: #7DD3FC;
+
+  /* ---- Sidebar ---- */
+  --dd-sidebar: #06070C;
+  --dd-sidebar-hover: #131624;
+  --dd-sidebar-active: rgba(129, 140, 248, 0.16);
+  --dd-sidebar-text: rgba(255, 255, 255, 0.55);
+  --dd-sidebar-text-active: #F8FAFC;
+  --dd-sidebar-border: rgba(255, 255, 255, 0.06);
+  --dd-sidebar-section: rgba(255, 255, 255, 0.3);
+
+  /* ---- Shadows ---- */
+  --dd-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --dd-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --dd-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --dd-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --dd-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --dd-shadow-dropdown: 0 4px 24px rgba(0, 0, 0, 0.5);
+
+  /* ---- Chart Colors ---- */
+  --dd-chart-1: #818CF8;
+  --dd-chart-2: #38BDF8;
+  --dd-chart-3: #FBBF24;
+  --dd-chart-4: #F87171;
+  --dd-chart-5: #A78BFA;
+  --dd-chart-grid: rgba(255, 255, 255, 0.06);
+  --dd-chart-text: #64748B;
+}
+
+/* ============================================
+   THEME-INDEPENDENT TOKENS
+   ============================================ */
+:root {
+  /* ---- Typography ---- */
+  --dd-font: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --dd-font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --dd-text-xs: 11px;
+  --dd-text-sm: 12px;
+  --dd-text-base: 14px;
+  --dd-text-md: 16px;
+  --dd-text-lg: 18px;
+  --dd-text-xl: 20px;
+  --dd-text-2xl: 24px;
+  --dd-text-3xl: 30px;
+
+  --dd-weight-regular: 400;
+  --dd-weight-medium: 500;
+  --dd-weight-semibold: 600;
+  --dd-weight-bold: 700;
+
+  --dd-leading-tight: 1.2;
+  --dd-leading-normal: 1.5;
+  --dd-leading-relaxed: 1.65;
+
+  /* ---- Spacing ---- */
+  --dd-space-0: 0;
+  --dd-space-px: 1px;
+  --dd-space-0-5: 2px;
+  --dd-space-1: 4px;
+  --dd-space-1-5: 6px;
+  --dd-space-2: 8px;
+  --dd-space-3: 12px;
+  --dd-space-4: 16px;
+  --dd-space-5: 20px;
+  --dd-space-6: 24px;
+  --dd-space-8: 32px;
+  --dd-space-10: 40px;
+  --dd-space-12: 48px;
+  --dd-space-16: 64px;
+
+  /* ---- Border Radius ---- */
+  --dd-radius-sm: 4px;
+  --dd-radius-md: 6px;
+  --dd-radius-lg: 8px;
+  --dd-radius-xl: 12px;
+  --dd-radius-2xl: 16px;
+  --dd-radius-full: 9999px;
+
+  /* ---- Z-Index ---- */
+  --dd-z-dropdown: 100;
+  --dd-z-sticky: 200;
+  --dd-z-sidebar: 300;
+  --dd-z-overlay: 400;
+  --dd-z-modal: 500;
+  --dd-z-toast: 600;
+  --dd-z-tooltip: 700;
+
+  /* ---- Transitions ---- */
+  --dd-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dd-duration-fast: 150ms;
+  --dd-duration-base: 200ms;
+  --dd-duration-slow: 300ms;
+  --dd-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --dd-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --dd-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Layout ---- */
+  --dd-sidebar-width: 256px;
+  --dd-sidebar-collapsed: 72px;
+  --dd-header-height: 60px;
+  --dd-content-max: 1440px;
+
+  /* =========================================
+     LEGACY ALIASES
+     ========================================= */
+  --color-primary: var(--dd-primary);
+  --color-primary-light: var(--dd-primary-light);
+  --color-primary-lighter: var(--dd-primary-lighter);
+  --color-primary-dark: var(--dd-primary-dark);
+  --color-primary-bg: var(--dd-primary-soft);
+
+  --color-background: var(--dd-bg);
+  --color-surface: var(--dd-surface);
+  --color-surface-hover: var(--dd-surface-hover);
+  --color-border: var(--dd-border);
+  --color-border-light: var(--dd-border-light);
+
+  --color-text-primary: var(--dd-text);
+  --color-text-secondary: var(--dd-text-secondary);
+  --color-text-tertiary: var(--dd-text-muted);
+  --color-text-inverse: var(--dd-text-inverse);
+  --color-text-link: var(--dd-text-link);
+
+  --color-success: var(--dd-success);
+  --color-success-bg: var(--dd-success-soft);
+  --color-success-border: var(--dd-success-border);
+  --color-warning: var(--dd-warning);
+  --color-warning-bg: var(--dd-warning-soft);
+  --color-warning-border: var(--dd-warning-border);
+  --color-error: var(--dd-error);
+  --color-error-bg: var(--dd-error-soft);
+  --color-error-border: var(--dd-error-border);
+  --color-info: var(--dd-info);
+  --color-info-bg: var(--dd-info-soft);
+  --color-info-border: var(--dd-info-border);
+
+  --color-sidebar: var(--dd-sidebar);
+  --color-sidebar-hover: var(--dd-sidebar-hover);
+  --color-sidebar-active: var(--dd-sidebar-active);
+  --color-sidebar-text: var(--dd-sidebar-text);
+  --color-sidebar-text-active: var(--dd-sidebar-text-active);
+  --color-sidebar-border: var(--dd-sidebar-border);
+
+  --font-family: var(--dd-font);
+  --font-size-xs: var(--dd-text-xs);
+  --font-size-sm: var(--dd-text-sm);
+  --font-size-base: var(--dd-text-base);
+  --font-size-md: var(--dd-text-md);
+  --font-size-lg: var(--dd-text-lg);
+  --font-size-xl: var(--dd-text-xl);
+  --font-size-2xl: var(--dd-text-2xl);
+  --font-size-3xl: var(--dd-text-3xl);
+  --font-size-4xl: var(--dd-text-3xl);
+
+  --font-weight-regular: var(--dd-weight-regular);
+  --font-weight-medium: var(--dd-weight-medium);
+  --font-weight-semibold: var(--dd-weight-semibold);
+  --font-weight-bold: var(--dd-weight-bold);
+
+  --line-height-tight: var(--dd-leading-tight);
+  --line-height-normal: var(--dd-leading-normal);
+  --line-height-relaxed: var(--dd-leading-relaxed);
+
+  --space-1: var(--dd-space-1);
+  --space-2: var(--dd-space-2);
+  --space-3: var(--dd-space-3);
+  --space-4: var(--dd-space-4);
+  --space-5: var(--dd-space-5);
+  --space-6: var(--dd-space-6);
+  --space-8: var(--dd-space-8);
+  --space-10: var(--dd-space-10);
+  --space-12: var(--dd-space-12);
+  --space-16: var(--dd-space-16);
+
+  --radius-sm: var(--dd-radius-sm);
+  --radius-md: var(--dd-radius-md);
+  --radius-lg: var(--dd-radius-lg);
+  --radius-xl: var(--dd-radius-xl);
+  --radius-2xl: var(--dd-radius-2xl);
+  --radius-full: var(--dd-radius-full);
+
+  --shadow-xs: var(--dd-shadow-xs);
+  --shadow-sm: var(--dd-shadow-sm);
+  --shadow-md: var(--dd-shadow-md);
+  --shadow-lg: var(--dd-shadow-lg);
+  --shadow-xl: var(--dd-shadow-xl);
+  --shadow-dropdown: var(--dd-shadow-dropdown);
+
+  --z-dropdown: var(--dd-z-dropdown);
+  --z-sticky: var(--dd-z-sticky);
+  --z-sidebar: var(--dd-z-sidebar);
+  --z-overlay: var(--dd-z-overlay);
+  --z-modal: var(--dd-z-modal);
+  --z-toast: var(--dd-z-toast);
+  --z-tooltip: var(--dd-z-tooltip);
+
+  --transition-fast: var(--dd-transition-fast);
+  --transition-base: var(--dd-transition-base);
+  --transition-slow: var(--dd-transition-slow);
+  --transition-sidebar: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  --sidebar-width: var(--dd-sidebar-width);
+  --sidebar-collapsed-width: var(--dd-sidebar-collapsed);
+  --header-height: var(--dd-header-height);
+  --content-max-width: var(--dd-content-max);
+}
+
+/* ============================================
+   ACCESSIBILITY — reduced motion
+   ============================================ */
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --dd-transition-fast: 0ms;
+    --dd-transition-base: 0ms;
+    --dd-transition-slow: 0ms;
+    --dd-duration-fast: 0ms;
+    --dd-duration-base: 0ms;
+    --dd-duration-slow: 0ms;
     --transition-fast: 0ms;
     --transition-base: 0ms;
     --transition-slow: 0ms;

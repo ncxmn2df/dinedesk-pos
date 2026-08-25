@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0D2C1F 0%, #15803D 50%, #22C55E 100%);
+  background: linear-gradient(135deg, #090D16 0%, #1E1B4B 45%, #4338CA 100%);
   padding: var(--space-4);
   position: relative;
   overflow: hidden;
@@ -587,9 +587,9 @@
   border-radius: var(--radius-full);
 }
 
-.table-card.available .table-card-status { background: var(--color-success-bg); color: #166534; }
-.table-card.occupied .table-card-status { background: var(--color-warning-bg); color: #92400E; }
-.table-card.reserved .table-card-status { background: var(--color-info-bg); color: #1E40AF; }
+.table-card.available .table-card-status { background: var(--dd-success-soft); color: var(--dd-success-text); }
+.table-card.occupied .table-card-status { background: var(--dd-warning-soft); color: var(--dd-warning-text); }
+.table-card.reserved .table-card-status { background: var(--dd-info-soft); color: var(--dd-info-text); }
 
 .table-card-order {
   margin-top: var(--space-3);
@@ -726,7 +726,7 @@
   border-radius: var(--radius-sm);
   padding: var(--space-2);
   font-size: var(--font-size-xs);
-  color: #92400E;
+  color: var(--dd-warning-text);
   margin-bottom: var(--space-3);
 }
 
@@ -861,7 +861,7 @@
 .cash-change-amount {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: #166534;
+  color: var(--dd-success-text);
 }
 
 .receipt-options {

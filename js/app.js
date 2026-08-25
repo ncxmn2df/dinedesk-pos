@@ -71,6 +71,10 @@ const ICONS = {
   code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+  banknote: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+  chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
 };
 
 function icon(name, size = 20) {
@@ -81,20 +85,21 @@ function icon(name, size = 20) {
 // Router
 // ==========================================
 const routes = {
-  login: { title: 'Sign In', render: renderLogin },
-  dashboard: { title: 'Dashboard', render: renderDashboard },
-  pos: { title: 'Point of Sale', render: renderPOS },
-  tables: { title: 'Table Management', render: renderTables },
-  kitchen: { title: 'Kitchen Display', render: renderKitchen },
-  orders: { title: 'Orders', render: renderOrders },
-  billing: { title: 'Billing & Payment', render: renderBilling },
-  menu: { title: 'Menu Management', render: renderMenu },
-  customers: { title: 'Customers', render: renderCustomers },
-  reports: { title: 'Reports & Analytics', render: renderReports },
-  inventory: { title: 'Inventory', render: renderInventory },
-  staff: { title: 'Staff Management', render: renderStaff },
-  settings: { title: 'Settings', render: renderSettings },
-  versionHistory: { title: 'Version History & System Releases', render: renderVersionHistory },
+  login: { title: 'Sign In', group: '', render: renderLogin },
+  dashboard: { title: 'Dashboard', group: 'Operations', render: renderDashboard },
+  pos: { title: 'Point of Sale', group: 'Operations', render: renderPOS },
+  tables: { title: 'Table Management', group: 'Operations', render: renderTables },
+  kitchen: { title: 'Kitchen Display', group: 'Operations', render: renderKitchen },
+  orders: { title: 'Orders', group: 'Operations', render: renderOrders },
+  billing: { title: 'Billing & Payment', group: 'Operations', render: renderBilling },
+  menu: { title: 'Menu Management', group: 'Management', render: renderMenu },
+  customers: { title: 'Customers', group: 'Management', render: renderCustomers },
+  inventory: { title: 'Inventory', group: 'Management', render: renderInventory },
+  staff: { title: 'Staff Management', group: 'Management', render: renderStaff },
+  expenses: { title: 'Expenses', group: 'Management', render: renderExpenses },
+  reports: { title: 'Reports & Analytics', group: 'Analytics', render: renderReports },
+  settings: { title: 'Settings', group: 'System', render: renderSettings },
+  versionHistory: { title: 'Version History', group: 'System', render: renderVersionHistory },
 };
 
 let currentRoute = 'login';
@@ -126,6 +131,39 @@ function navigate(route) {
 }
 
 // ==========================================
+// Theme Management
+// ==========================================
+function getTheme() {
+  return document.documentElement.getAttribute('data-theme') || 'light';
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('dd-theme', theme);
+}
+
+function toggleTheme() {
+  setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+  // Re-render to update icon
+  navigate(currentRoute);
+}
+
+// ==========================================
+// Breadcrumb Helper
+// ==========================================
+function renderBreadcrumb(route) {
+  const config = routes[route];
+  if (!config || route === 'dashboard') return '';
+  const group = config.group || '';
+  let crumbs = `<a href="#dashboard">Home</a><span class="breadcrumb-sep">${icon('chevronRight', 12)}</span>`;
+  if (group) {
+    crumbs += `<span>${group}</span><span class="breadcrumb-sep">${icon('chevronRight', 12)}</span>`;
+  }
+  crumbs += `<span class="breadcrumb-current">${config.title}</span>`;
+  return `<nav class="breadcrumb" aria-label="Breadcrumb">${crumbs}</nav>`;
+}
+
+// ==========================================
 // App Shell (Sidebar + Header + Content)
 // ==========================================
 function renderAppShell(container, route) {
@@ -134,6 +172,10 @@ function renderAppShell(container, route) {
   const unreadNotifs = state.notifications.filter(n => !n.read).length;
   const userName = state.auth.user?.name || 'Admin';
   const userInitials = getInitials(userName);
+  const isDark = getTheme() === 'dark';
+  const themeIcon = isDark ? 'sun' : 'moon';
+  const themeLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  const pendingKitchen = state.orders.filter(o => o.status === 'Pending' || o.status === 'Preparing').length;
 
   container.innerHTML = `
     <div class="mobile-overlay" id="mobileOverlay"></div>
@@ -145,20 +187,23 @@ function renderAppShell(container, route) {
         </a>
       </div>
       <div class="sidebar-nav">
-        <div class="sidebar-section-title">Main</div>
+        <div class="sidebar-section-title">Operations</div>
         ${sidebarItem('dashboard', 'Dashboard', 'layoutDashboard', route)}
         ${sidebarItem('pos', 'POS', 'shoppingCart', route)}
         ${sidebarItem('tables', 'Tables', 'grid', route)}
-        ${sidebarItem('kitchen', 'Kitchen', 'chefHat', route)}
+        ${sidebarItem('kitchen', 'Kitchen', 'chefHat', route, pendingKitchen > 0 ? pendingKitchen : null)}
         ${sidebarItem('orders', 'Orders', 'clipboardList', route)}
         <div class="sidebar-section-title">Management</div>
         ${sidebarItem('menu', 'Menu', 'bookOpen', route)}
         ${sidebarItem('customers', 'Customers', 'users', route)}
-        ${sidebarItem('reports', 'Reports', 'barChart', route)}
         ${sidebarItem('inventory', 'Inventory', 'package', route)}
         ${sidebarItem('staff', 'Staff', 'userCog', route)}
+        ${sidebarItem('expenses', 'Expenses', 'banknote', route)}
+        <div class="sidebar-section-title">Analytics</div>
+        ${sidebarItem('reports', 'Reports', 'barChart', route)}
+        <div class="sidebar-section-title">System</div>
         ${sidebarItem('settings', 'Settings', 'settings', route)}
-        ${sidebarItem('versionHistory', 'Version History', 'gitCommit', route)}
+        ${sidebarItem('versionHistory', 'Releases', 'gitCommit', route)}
       </div>
       <div class="sidebar-footer">
         ${sidebarItem('help', 'Help & Support', 'helpCircle', route)}
@@ -173,7 +218,10 @@ function renderAppShell(container, route) {
       <header class="app-header">
         <div class="header-left">
           <button class="header-menu-btn" id="menuBtn" aria-label="Toggle menu">${icon('menu', 22)}</button>
-          <h1 class="header-title">${routeConfig?.title || ''}</h1>
+          <div class="header-page-info">
+            <h1 class="header-title">${routeConfig?.title || ''}</h1>
+            ${renderBreadcrumb(route)}
+          </div>
         </div>
         <div class="header-search" id="headerSearch">
           <span class="header-search-icon">${icon('search', 18)}</span>
@@ -181,6 +229,9 @@ function renderAppShell(container, route) {
           <span class="header-search-shortcut">/</span>
         </div>
         <div class="header-right">
+          <button class="theme-toggle" id="themeToggle" aria-label="${themeLabel}" title="${themeLabel}">
+            ${icon(themeIcon, 20)}
+          </button>
           <div style="position:relative">
             <button class="header-icon-btn" id="notifBtn" aria-label="Notifications">
               ${icon('bell')}
@@ -204,7 +255,6 @@ function renderAppShell(container, route) {
                 <div class="profile-dropdown-email">${escapeHtml(state.auth.user?.email || '')}</div>
               </div>
               <a class="profile-dropdown-item" data-nav="settings">${icon('user', 16)} My Profile</a>
-              <a class="profile-dropdown-item" data-nav="settings">${icon('settings', 16)} Preferences</a>
               <a class="profile-dropdown-item" data-nav="settings">${icon('settings', 16)} Settings</a>
               <a class="profile-dropdown-item" data-nav="help">${icon('helpCircle', 16)} Help</a>
               <div class="profile-dropdown-divider"></div>
@@ -238,11 +288,13 @@ function renderAppShell(container, route) {
   bindShellEvents();
 }
 
-function sidebarItem(route, label, iconName, currentRoute) {
+function sidebarItem(route, label, iconName, currentRoute, badgeCount = null) {
   const isActive = route === currentRoute;
+  const badge = badgeCount ? `<span class="sidebar-item-badge">${badgeCount}</span>` : '';
   return `<a class="sidebar-item ${isActive ? 'active' : ''}" data-nav="${route}" role="button" tabindex="0" aria-current="${isActive ? 'page' : 'false'}">
     <span class="sidebar-item-icon">${icon(iconName)}</span>
     <span class="sidebar-item-label">${label}</span>
+    ${badge}
   </a>`;
 }
 
@@ -291,6 +343,9 @@ function bindShellEvents() {
     navigate('login');
     showToast('Logged out successfully', 'success');
   });
+
+  // Theme toggle
+  document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
 
   // Mobile menu
   document.getElementById('menuBtn')?.addEventListener('click', toggleMobileMenu);
@@ -634,12 +689,12 @@ function initDashboardCharts() {
   if (typeof Chart === 'undefined') return;
 
   const chartColors = {
-    primary: '#15803D',
-    primaryLight: '#22C55E',
-    info: '#3B82F6',
+    primary: '#6366F1',
+    primaryLight: '#818CF8',
+    info: '#0EA5E9',
     warning: '#F59E0B',
     error: '#EF4444',
-    grid: '#F3F4F6'
+    grid: 'rgba(15, 23, 42, 0.06)'
   };
 
   // Revenue Chart
@@ -653,7 +708,7 @@ function initDashboardCharts() {
           label: 'Revenue (₹)',
           data: revenueChartData.revenue,
           borderColor: chartColors.primary,
-          backgroundColor: 'rgba(21, 128, 61, 0.08)',
+          backgroundColor: 'rgba(99, 102, 241, 0.10)',
           fill: true,
           tension: 0.4,
           pointRadius: 4,
@@ -1591,7 +1646,7 @@ function renderReports(container) {
     if (hrCtx) {
       chartInstances.hourly = new Chart(hrCtx, {
         type: 'bar',
-        data: { labels: hourlyRevenueData.labels, datasets: [{ label: 'Revenue', data: hourlyRevenueData.values, backgroundColor: '#22C55E', borderRadius: 4, barThickness: 24 }] },
+        data: { labels: hourlyRevenueData.labels, datasets: [{ label: 'Revenue', data: hourlyRevenueData.values, backgroundColor: '#6366F1', borderRadius: 4, barThickness: 24 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => formatINRShort(v) } }, x: { grid: { display: false } } } }
       });
     }
@@ -1599,7 +1654,7 @@ function renderReports(container) {
     if (pmCtx) {
       chartInstances.payment = new Chart(pmCtx, {
         type: 'doughnut',
-        data: { labels: ['Cash', 'Card', 'UPI'], datasets: [{ data: [35, 28, 37], backgroundColor: ['#22C55E', '#3B82F6', '#F59E0B'], borderWidth: 0 }] },
+        data: { labels: ['Cash', 'Card', 'UPI'], datasets: [{ data: [35, 28, 37], backgroundColor: ['#10B981', '#6366F1', '#F59E0B'], borderWidth: 0 }] },
         options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
       });
     }
@@ -1607,7 +1662,7 @@ function renderReports(container) {
     if (tpCtx) {
       chartInstances.topProd = new Chart(tpCtx, {
         type: 'bar',
-        data: { labels: popularItemsData.map(i => i.name), datasets: [{ label: 'Orders', data: popularItemsData.map(i => i.orders), backgroundColor: '#15803D', borderRadius: 4 }] },
+        data: { labels: popularItemsData.map(i => i.name), datasets: [{ label: 'Orders', data: popularItemsData.map(i => i.orders), backgroundColor: '#4F46E5', borderRadius: 4 }] },
         options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true }, y: { grid: { display: false } } } }
       });
     }
@@ -2096,6 +2151,30 @@ function showConfirmDialog(title, message, onConfirm) {
       <p class="confirm-dialog-text">${message}</p>
     </div>
   `, () => { onConfirm(); closeModal(); });
+}
+
+// ==========================================
+// PAGE: Expenses (Placeholder — Phase F)
+// ==========================================
+function renderExpenses(container) {
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-content">
+        <h2 class="page-header-title">Expenses</h2>
+        <p class="page-header-desc">Track and manage restaurant expenses, vendor payments, and cost centers</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" disabled>${icon('plus', 16)} Add Expense</button>
+      </div>
+    </div>
+    <div class="card" style="padding:var(--space-16)">
+      <div class="empty-state">
+        <div class="empty-state-icon">${icon('banknote', 48)}</div>
+        <h3 class="empty-state-title">Expense Tracking Coming Soon</h3>
+        <div class="empty-state-text">Full expense management with categories, vendor tracking, recurring expenses, and P&L reports will be available in the next update.</div>
+      </div>
+    </div>
+  `;
 }
 
 // ==========================================
