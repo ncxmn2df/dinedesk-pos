@@ -1173,10 +1173,9 @@ function renderPOS(container) {
         <!-- Integrated Menu Workspace Toolbar -->
         <div class="pos-menu-toolbar">
           <div class="pos-menu-toolbar-top">
-            <div class="pos-menu-search-wrap">
-              ${icon('search', 15)}
-              <input type="text" placeholder="Search menu items (e.g. Pizza, Biryani, Coffee)..." id="posSearchInput" value="${escapeHtml(window._posSearchQuery || '')}" autocomplete="off">
-              ${window._posSearchQuery ? `<button class="pos-search-clear" id="posClearSearchBtn" title="Clear search">✕</button>` : ''}
+            <div class="pill-search-wrap pos-menu-search-wrap">
+              <input type="text" class="pill-search-input" placeholder="Search menu items (e.g. Pizza, Biryani, Coffee)..." id="posSearchInput" value="${escapeHtml(window._posSearchQuery || '')}" autocomplete="off">
+              ${window._posSearchQuery ? `<button class="pill-search-clear pos-search-clear" id="posClearSearchBtn" title="Clear search">✕</button>` : ''}
             </div>
             <div class="pos-results-counter">
               Showing <strong>${filteredItems.length}</strong> items
@@ -1213,7 +1212,7 @@ function renderPOS(container) {
                     <span class="pos-diet-dot ${isVeg ? 'veg' : 'nonveg'}"></span>
                     ${isVeg ? 'Veg' : 'Non-Veg'}
                   </span>
-                  <img src="${item.image}" alt="${escapeHtml(item.name)}" class="pos-product-img" loading="lazy">
+                  <img src="${item.image || 'assets/images/food/butter-chicken.jpg'}" alt="${escapeHtml(item.name)}" class="pos-product-img" loading="lazy" onerror="this.onerror=null;this.src='assets/images/food/butter-chicken.jpg'">
                 </div>
 
                 <div class="pos-product-info">
@@ -1597,9 +1596,8 @@ function renderTables(container) {
         <div class="tables-toolbar-top">
           <div class="tables-toolbar-left-group">
             <!-- Search -->
-            <div class="tables-search-wrap">
-              ${icon('search', 14)}
-              <input type="text" placeholder="Search table #, floor, order..." id="tablesSearchInput" value="${escapeHtml(window._tableSearchQuery || '')}">
+            <div class="pill-search-wrap tables-search-wrap">
+              <input type="text" class="pill-search-input" placeholder="Search table #, floor, order..." id="tablesSearchInput" value="${escapeHtml(window._tableSearchQuery || '')}">
             </div>
 
             <!-- Floor Segmented Tabs -->
@@ -2367,6 +2365,7 @@ function bindBillingEvents(order) {
       showToast(`Payment of ${formatINR(order.total)} received via ${selectedMethod}`, 'success');
       renderBilling(document.getElementById('pageContent'));
     }, selectedMethod === 'Cash' ? 500 : 1500);
+  });
 }
 
 // ==========================================
@@ -2382,9 +2381,8 @@ function renderOrders(container) {
       <h2 class="page-title">Orders</h2>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header" style="padding:16px 20px">
+      <div class="data-table-header">
         <div class="pill-search-wrap">
-          ${icon('search', 15)}
           <input type="text" class="pill-search-input" placeholder="Search orders..." id="orderSearchInput">
         </div>
         <div class="data-table-actions">
@@ -2399,43 +2397,45 @@ function renderOrders(container) {
           </select>
         </div>
       </div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ORDER ID</th>
-            <th>CUSTOMER</th>
-            <th>TYPE</th>
-            <th>ITEMS</th>
-            <th>AMOUNT</th>
-            <th>PAYMENT</th>
-            <th>STATUS</th>
-            <th>DATE</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${filtered.length === 0 ? `<tr><td colspan="9">${renderEmptyState({ iconName: 'clipboardList', title: 'No orders found', description: 'No orders match your active filter criteria.', actionText: 'Create Order', actionNav: 'pos' })}</td></tr>` : ''}
-          ${filtered.map(o => {
-            const customer = o.customerId ? store.state.customers.find(c => c.id === o.customerId) : null;
-            const payClass = o.paymentStatus === 'Paid' ? 'badge-order-paid' : 'badge-order-unpaid';
-            const statClass = o.status === 'Preparing' ? 'badge-order-preparing' : o.status === 'Pending' ? 'badge-order-pending' : o.status === 'Ready' ? 'badge-order-ready' : 'badge-order-completed';
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ORDER ID</th>
+              <th>CUSTOMER</th>
+              <th>TYPE</th>
+              <th>ITEMS</th>
+              <th>AMOUNT</th>
+              <th>PAYMENT</th>
+              <th>STATUS</th>
+              <th>DATE</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.length === 0 ? `<tr><td colspan="9">${renderEmptyState({ iconName: 'clipboardList', title: 'No orders found', description: 'No orders match your active filter criteria.', actionText: 'Create Order', actionNav: 'pos' })}</td></tr>` : ''}
+            ${filtered.map(o => {
+              const customer = o.customerId ? store.state.customers.find(c => c.id === o.customerId) : null;
+              const payClass = o.paymentStatus === 'Paid' ? 'badge-order-paid' : 'badge-order-unpaid';
+              const statClass = o.status === 'Preparing' ? 'badge-order-preparing' : o.status === 'Pending' ? 'badge-order-pending' : o.status === 'Ready' ? 'badge-order-ready' : 'badge-order-completed';
 
-            return `<tr>
-              <td style="font-weight:700;color:var(--dd-text)">${o.id}</td>
-              <td style="color:var(--dd-text-secondary);font-weight:500">${customer ? escapeHtml(customer.name) : 'Walk-in'}</td>
-              <td><span class="badge badge-channel">${o.orderType}</span></td>
-              <td style="color:var(--dd-text-secondary)">${o.itemCount || (o.items ? o.items.reduce((s,i)=>s+i.quantity,0) : 1)}</td>
-              <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(o.total)}</td>
-              <td><span class="badge ${payClass}">${o.paymentStatus.toUpperCase()}</span></td>
-              <td><span class="badge ${statClass}">${o.status.toUpperCase()}</span></td>
-              <td style="font-size:12.5px;color:var(--dd-text-muted)">${formatTime(o.createdAt)}</td>
-              <td style="text-align:right">
-                ${o.paymentStatus === 'Unpaid' ? `<a href="#billing" onclick="store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${o.id}');navigate('billing');return false;" style="color:var(--dd-primary);font-weight:600;font-size:13px;text-decoration:none">Bill</a>` : ''}
-              </td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+              return `<tr>
+                <td style="font-weight:700;color:var(--dd-text)">${o.id}</td>
+                <td style="color:var(--dd-text-secondary);font-weight:500">${customer ? escapeHtml(customer.name) : 'Walk-in'}</td>
+                <td><span class="badge badge-channel">${o.orderType}</span></td>
+                <td style="color:var(--dd-text-secondary)">${o.itemCount || (o.items ? o.items.reduce((s,i)=>s+i.quantity,0) : 1)}</td>
+                <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(o.total)}</td>
+                <td><span class="badge ${payClass}">${o.paymentStatus.toUpperCase()}</span></td>
+                <td><span class="badge ${statClass}">${o.status.toUpperCase()}</span></td>
+                <td style="font-size:12.5px;color:var(--dd-text-muted)">${formatTime(o.createdAt)}</td>
+                <td style="text-align:right">
+                  ${o.paymentStatus === 'Unpaid' ? `<a href="#billing" onclick="store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${o.id}');navigate('billing');return false;" style="color:var(--dd-primary);font-weight:600;font-size:13px;text-decoration:none">Bill</a>` : ''}
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
       <div class="data-table-footer" style="padding:12px 20px;font-size:12px;color:var(--dd-text-muted)">
         <span>Showing ${filtered.length} of ${orders.length} orders</span>
       </div>
@@ -2491,50 +2491,51 @@ function renderMenu(container) {
 
       <!-- Main Data Table Container -->
       <div class="data-table-container">
-        <div class="data-table-header" style="padding:16px 20px">
+        <div class="data-table-header">
           <div class="pill-search-wrap">
-            ${icon('search', 15)}
             <input type="text" class="pill-search-input" placeholder="Search menu items..." id="menuSearchInput">
           </div>
         </div>
 
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>NAME</th>
-              <th>CATEGORY</th>
-              <th>PRICE</th>
-              <th>PREP TIME</th>
-              <th>AVAILABLE</th>
-              <th style="text-align:right">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filtered.map(i => `
-              <tr data-menu-id="${i.id}">
-                <td>
-                  <div style="display:flex;align-items:center;gap:12px">
-                    <img src="${i.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100'}" alt="${escapeHtml(i.name)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--dd-border)">
-                    <span style="font-weight:600;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</span>
-                  </div>
-                </td>
-                <td><span class="badge badge-channel" style="text-transform:capitalize">${i.category}</span></td>
-                <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(i.price)}</td>
-                <td style="color:var(--dd-text-secondary);font-size:13px">${i.prepTime || 15} min</td>
-                <td>
-                  <label class="toggle-switch">
-                    <input type="checkbox" class="menu-available-toggle" data-item-id="${i.id}" ${i.available !== false ? 'checked' : ''}>
-                    <span class="toggle-slider"></span>
-                  </label>
-                </td>
-                <td style="text-align:right">
-                  <button class="btn btn-ghost btn-icon btn-sm" onclick="showMenuItemForm(store.state.menuItems.find(x=>x.id==='${i.id}'))" title="Edit Item" style="color:var(--dd-text-muted)">${icon('edit', 14)}</button>
-                  <button class="btn btn-ghost btn-icon btn-sm" onclick="store.deleteMenuItem('${i.id}');renderMenu(document.getElementById('pageContent'));showToast('Item deleted','info')" title="Delete Item" style="color:#DC2626">${icon('trash', 14)}</button>
-                </td>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th>CATEGORY</th>
+                <th>PRICE</th>
+                <th>PREP TIME</th>
+                <th>AVAILABLE</th>
+                <th style="text-align:right">ACTIONS</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${filtered.map(i => `
+                <tr data-menu-id="${i.id}">
+                  <td>
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <img src="${i.image || 'assets/images/food/butter-chicken.jpg'}" alt="${escapeHtml(i.name)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--dd-border)">
+                      <span style="font-weight:600;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-channel" style="text-transform:capitalize">${i.category}</span></td>
+                  <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(i.price)}</td>
+                  <td style="color:var(--dd-text-secondary);font-size:13px">${i.prepTime || 15} min</td>
+                  <td>
+                    <label class="toggle-switch">
+                      <input type="checkbox" class="menu-available-toggle" data-item-id="${i.id}" ${i.available !== false ? 'checked' : ''}>
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </td>
+                  <td style="text-align:right">
+                    <button class="btn btn-ghost btn-icon btn-sm" onclick="showMenuItemForm(store.state.menuItems.find(x=>x.id==='${i.id}'))" title="Edit Item" style="color:var(--dd-text-muted)">${icon('edit', 14)}</button>
+                    <button class="btn btn-ghost btn-icon btn-sm" onclick="store.deleteMenuItem('${i.id}');renderMenu(document.getElementById('pageContent'));showToast('Item deleted','info')" title="Delete Item" style="color:#DC2626">${icon('trash', 14)}</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   `;
@@ -2566,6 +2567,37 @@ function renderMenu(container) {
   }, 200));
 }
 
+window.showMenuItemForm = function(item = null) {
+  const isEdit = !!item;
+  showModal(isEdit ? 'Edit Menu Item' : 'Add Menu Item', `
+    <form id="menuItemForm">
+      <div class="form-group"><label class="form-label">Name</label><input class="form-input" name="name" value="${item ? escapeHtml(item.name) : ''}" required></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-select" name="category">
+          ${CATEGORIES.filter(c => c.id !== 'all').map(c => `<option value="${c.id}" ${item && item.category === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" type="number" name="price" value="${item ? item.price : ''}" required min="1"></div>
+      <div class="form-group"><label class="form-label">Prep Time (min)</label><input class="form-input" type="number" name="prepTime" value="${item ? item.prepTime || 15 : 15}" min="1"></div>
+      <div class="form-group"><label class="form-label">Image Path</label><input class="form-input" name="image" value="${item ? escapeHtml(item.image || '') : 'assets/images/food/butter-chicken.jpg'}"></div>
+    </form>
+  `, () => {
+    const data = Object.fromEntries(new FormData(document.getElementById('menuItemForm')));
+    if (!data.name || !data.price) { showToast('Name and price required', 'error'); return; }
+    data.price = parseFloat(data.price);
+    data.prepTime = parseInt(data.prepTime) || 15;
+    if (isEdit) {
+      store.updateMenuItem(item.id, data);
+      showToast('Menu item updated', 'success');
+    } else {
+      store.addMenuItem(data);
+      showToast('Menu item added', 'success');
+    }
+    closeModal();
+    renderMenu(document.getElementById('pageContent'));
+  });
+};
+
 // ==========================================
 // PAGE: Customers (Screenshot 09 Specification)
 // ==========================================
@@ -2580,43 +2612,44 @@ function renderCustomers(container) {
       </button>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header" style="padding:16px 20px">
+      <div class="data-table-header">
         <div class="pill-search-wrap">
-          ${icon('search', 15)}
           <input type="text" class="pill-search-input" placeholder="Search customers..." id="custSearchInput">
         </div>
       </div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>NAME</th>
-            <th>PHONE</th>
-            <th>ORDERS</th>
-            <th>TOTAL SPEND</th>
-            <th>LOYALTY</th>
-            <th>LAST VISIT</th>
-            <th>PREFERRED</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${customers.map(c => `
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
             <tr>
-              <td>
-                <div style="display:flex;align-items:center;gap:12px">
-                  <div class="avatar-circle-init">${getInitials(c.name)}</div>
-                  <span style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(c.name)}</span>
-                </div>
-              </td>
-              <td style="color:var(--dd-text-secondary);font-size:13px">${c.phone}</td>
-              <td style="color:var(--dd-text-secondary);font-size:13px">${c.orderCount}</td>
-              <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(c.totalSpend)}</td>
-              <td><span class="badge badge-loyalty">${c.loyaltyPoints} pts</span></td>
-              <td style="font-size:12.5px;color:var(--dd-text-secondary)">${formatDate(c.lastVisit)}</td>
-              <td><span class="badge badge-channel">${c.preferredOrderType}</span></td>
+              <th>NAME</th>
+              <th>PHONE</th>
+              <th>ORDERS</th>
+              <th>TOTAL SPEND</th>
+              <th>LOYALTY</th>
+              <th>LAST VISIT</th>
+              <th>PREFERRED</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${customers.map(c => `
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div class="avatar-circle-init">${getInitials(c.name)}</div>
+                    <span style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(c.name)}</span>
+                  </div>
+                </td>
+                <td style="color:var(--dd-text-secondary);font-size:13px">${c.phone}</td>
+                <td style="color:var(--dd-text-secondary);font-size:13px">${c.orderCount}</td>
+                <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(c.totalSpend)}</td>
+                <td><span class="badge badge-loyalty">${c.loyaltyPoints} pts</span></td>
+                <td style="font-size:12.5px;color:var(--dd-text-secondary)">${formatDate(c.lastVisit)}</td>
+                <td><span class="badge badge-channel">${c.preferredOrderType}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
   `;
 
@@ -2722,9 +2755,8 @@ function renderInventory(container) {
       </button>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header" style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div class="data-table-header">
         <div class="pill-search-wrap">
-          ${icon('search', 15)}
           <input type="text" class="pill-search-input" placeholder="Search inventory..." id="invSearchInput">
         </div>
         <div class="data-table-actions" style="display:flex;gap:8px">
@@ -2732,32 +2764,34 @@ function renderInventory(container) {
           <span class="badge-stock-out">● Out of Stock: ${outCount}</span>
         </div>
       </div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ITEM</th>
-            <th>CATEGORY</th>
-            <th>STOCK UNIT</th>
-            <th>REORDER LEVEL SUPPLIER</th>
-            <th>STATUS</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${items.map(i => `
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
             <tr>
-              <td style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</td>
-              <td><span class="badge badge-channel">${i.category}</span></td>
-              <td><strong style="font-size:14px;color:var(--dd-text)">${i.currentStock}</strong><span style="font-size:12px;color:var(--dd-text-secondary)">${i.unit}</span></td>
-              <td style="color:var(--dd-text-secondary);font-size:13px">${i.reorderLevel}${i.supplier}</td>
-              <td>
-                <span class="badge ${i.status==='In Stock' ? 'badge-order-paid' : i.status==='Low Stock' ? 'badge-stock-low' : 'badge-stock-out'}" style="font-weight:600;font-size:11px">
-                  ${i.status}
-                </span>
-              </td>
+              <th>ITEM</th>
+              <th>CATEGORY</th>
+              <th>STOCK UNIT</th>
+              <th>REORDER LEVEL SUPPLIER</th>
+              <th>STATUS</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${items.map(i => `
+              <tr>
+                <td style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</td>
+                <td><span class="badge badge-channel">${i.category}</span></td>
+                <td><strong style="font-size:14px;color:var(--dd-text)">${i.currentStock}</strong><span style="font-size:12px;color:var(--dd-text-secondary)">${i.unit}</span></td>
+                <td style="color:var(--dd-text-secondary);font-size:13px">${i.reorderLevel}${i.supplier}</td>
+                <td>
+                  <span class="badge ${i.status==='In Stock' ? 'badge-order-paid' : i.status==='Low Stock' ? 'badge-stock-low' : 'badge-stock-out'}" style="font-weight:600;font-size:11px">
+                    ${i.status}
+                  </span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
   `;
 
@@ -2779,7 +2813,7 @@ function renderStaff(container) {
   container.innerHTML = `
     <div class="page-header">
       <h2 class="page-title">Staff Management</h2>
-      <button class="btn btn-primary">${icon('plus', 16)} Add Staff</button>
+      <button class="btn btn-primary">${icon('plus', 14)} Add Staff</button>
     </div>
     <div class="data-table-container">
       <table class="data-table">
@@ -3410,7 +3444,7 @@ function renderExpenses(container) {
         <p class="page-header-desc">Track and manage restaurant expenses, vendor payments, and cost centers</p>
       </div>
       <div class="page-actions">
-        <button class="btn btn-primary" disabled>${icon('plus', 16)} Add Expense</button>
+        <button class="btn btn-primary" disabled>${icon('plus', 14)} Add Expense</button>
       </div>
     </div>
     <div class="card" style="padding:var(--space-8)">

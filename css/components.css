@@ -35,6 +35,14 @@
 }
 .btn-primary:hover:not(:disabled) { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
 
+.page-header .btn-primary,
+.page-actions .btn-primary,
+.btn-pill {
+  border-radius: var(--radius-full);
+  padding: 0 18px;
+  height: 38px;
+}
+
 .btn-secondary {
   background: var(--color-surface);
   color: var(--color-text-primary);
@@ -159,15 +167,19 @@
 .input-group-action:hover { color: var(--color-text-primary); }
 
 /* Toggle Switch */
-.toggle {
+.toggle,
+.toggle-switch {
   position: relative;
-  display: inline-flex;
+  display: inline-block;
   width: 44px;
   height: 24px;
   cursor: pointer;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
-.toggle input {
+.toggle input,
+.toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -195,9 +207,12 @@
   box-shadow: var(--shadow-xs);
 }
 
-.toggle input:checked + .toggle-slider { background: var(--color-primary); }
-.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
-.toggle input:focus-visible + .toggle-slider { box-shadow: 0 0 0 3px var(--color-primary-bg); }
+.toggle input:checked + .toggle-slider,
+.toggle-switch input:checked + .toggle-slider { background: var(--color-primary); }
+.toggle input:checked + .toggle-slider::before,
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+.toggle input:focus-visible + .toggle-slider,
+.toggle-switch input:focus-visible + .toggle-slider { box-shadow: 0 0 0 3px var(--color-primary-bg); }
 
 /* Checkbox */
 .checkbox {
@@ -436,34 +451,29 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* ---- Pill Search Controls (Figma Screenshots Standard) ---- */
+/* ---- Pill Search Controls (Figma Screenshots & Order Entry Standard) ---- */
 .pill-search-wrap {
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  width: 100%;
-  max-width: 380px;
-}
-
-.pill-search-wrap svg {
-  position: absolute;
-  left: 14px;
-  color: var(--dd-text-muted);
-  pointer-events: none;
-  width: 16px;
-  height: 16px;
+  width: 320px;
+  max-width: 100%;
+  flex: none;
+  box-sizing: border-box;
 }
 
 .pill-search-input {
   width: 100%;
   height: 40px;
-  padding: 0 16px 0 40px;
+  padding: 0 36px 0 16px;
   background: var(--dd-surface-muted);
   border: 1px solid var(--dd-border);
   border-radius: var(--radius-full);
   font-size: 13.5px;
+  font-family: inherit;
   color: var(--dd-text);
   transition: all var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .pill-search-input:focus {
@@ -475,6 +485,45 @@
 
 .pill-search-input::placeholder {
   color: var(--dd-text-muted);
+}
+
+.pill-search-clear,
+.pos-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  background: var(--dd-border);
+  color: var(--dd-text-secondary);
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all var(--transition-fast);
+  z-index: 2;
+}
+
+.pill-search-clear:hover,
+.pos-search-clear:hover {
+  background: var(--dd-primary-soft);
+  color: var(--dd-primary-dark);
+}
+
+@media (max-width: 768px) {
+  .pill-search-wrap {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    flex: 1;
+  }
 }
 
 /* Category outline pills (Screenshot 08) */
@@ -605,55 +654,59 @@
 
 /* ---- Data Table ---- */
 .data-table-container {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--dd-surface);
+  border: 1px solid var(--dd-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--dd-shadow-xs);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
 }
 
 .data-table-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
+  padding: 14px 20px;
   gap: var(--space-4);
   flex-wrap: wrap;
-}
-
-.data-table-search {
-  position: relative;
-  width: 280px;
-  max-width: 100%;
-}
-
-.data-table-search input {
+  background: var(--dd-surface);
+  border-bottom: 1px solid var(--dd-border);
+  min-height: 56px;
+  box-sizing: border-box;
   width: 100%;
-  height: 38px;
-  padding: 0 12px 0 34px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: 13.5px;
-  background: var(--color-background);
-  color: var(--color-text-primary);
-  transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.data-table-search input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-bg);
-  background: var(--color-surface);
-  outline: none;
+.data-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
 }
 
-.data-table-search svg {
-  position: absolute;
-  left: 11px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 15px;
-  height: 15px;
-  color: var(--color-text-tertiary);
-  pointer-events: none;
+@media (max-width: 768px) {
+  .data-table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .data-table-header .pill-search-wrap {
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .data-table-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
 .data-table-actions {
@@ -716,6 +769,16 @@
   border-top: 1px solid var(--color-border);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .data-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .data-table {
+    min-width: 600px;
+  }
 }
 
 .pagination {

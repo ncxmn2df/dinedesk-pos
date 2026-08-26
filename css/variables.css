@@ -1,7 +1,7 @@
 /* ==========================================
    DineDesk Design Token System
-   Theme: DineDesk Emerald & Modern Neutral Slate
-   (High-density B2B Restaurant Operations)
+   Theme: DineDesk Figma Purple/Lavender System
+   (Authoritative Figma Node 21:14281 Specification)
    ========================================== */
 
 /* ============================================
@@ -15,11 +15,12 @@
   --dd-primary-soft: #E3DFFF;
   --dd-primary-lighter: #E3DFFF;
   --dd-primary-light: #6366F1;
-  --dd-primary-dark: #3730A3;
+  --dd-primary-dark: #150066;
   --dd-primary-text: #150066;
 
   /* ---- Backgrounds & Solid Surfaces ---- */
   --dd-bg: #FDF7FF;
+  --dd-sidebar: #F6F1FA;
   --dd-surface: #FFFFFF;
   --dd-surface-hover: #F6F1FA;
   --dd-surface-muted: #EAE5EE;
