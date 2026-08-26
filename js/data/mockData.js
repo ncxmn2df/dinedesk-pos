@@ -2,48 +2,56 @@
 // DineDesk Mock Data — Indian Restaurant
 // ==========================================
 
-// ---- Menu Items ----
+// ---- Menu Items (Real Dish Photography) ----
 export const mockMenuItems = [
   // Indian
-  { id: 'ITEM-101', name: 'Butter Chicken', price: 320, category: 'indian', emoji: '🍛', prepTime: 20, available: true, description: 'Creamy tomato-based chicken curry' },
-  { id: 'ITEM-102', name: 'Paneer Tikka', price: 260, category: 'indian', emoji: '🧀', prepTime: 15, available: true, description: 'Grilled cottage cheese with spices' },
-  { id: 'ITEM-103', name: 'Chicken Biryani', price: 280, category: 'indian', emoji: '🍚', prepTime: 25, available: true, description: 'Fragrant basmati rice with spiced chicken' },
-  { id: 'ITEM-104', name: 'Dal Makhani', price: 220, category: 'indian', emoji: '🥘', prepTime: 20, available: true, description: 'Slow-cooked black lentils in cream' },
-  { id: 'ITEM-105', name: 'Naan', price: 45, category: 'indian', emoji: '🫓', prepTime: 5, available: true, description: 'Fresh tandoor-baked bread' },
-  { id: 'ITEM-106', name: 'Garlic Naan', price: 60, category: 'indian', emoji: '🧄', prepTime: 5, available: true, description: 'Naan with fresh garlic and butter' },
-  { id: 'ITEM-107', name: 'Tandoori Chicken', price: 340, category: 'indian', emoji: '🍗', prepTime: 25, available: true, description: 'Marinated chicken grilled in tandoor' },
+  { id: 'ITEM-101', name: 'Butter Chicken', price: 320, category: 'indian', isVeg: false, image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=600&q=80', emoji: '🍛', prepTime: 20, available: true, description: 'Tender chicken simmered in rich creamy tomato butter gravy with aromatic spices' },
+  { id: 'ITEM-102', name: 'Paneer Tikka', price: 260, category: 'indian', isVeg: true, image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=600&q=80', emoji: '🧀', prepTime: 15, available: true, description: 'Charcoal-grilled cottage cheese cubes marinated in spiced yogurt and herbs' },
+  { id: 'ITEM-103', name: 'Chicken Biryani', price: 280, category: 'indian', isVeg: false, image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80', emoji: '🍚', prepTime: 25, available: true, description: 'Fragrant aged basmati rice cooked on dum with marinated chicken and saffron' },
+  { id: 'ITEM-104', name: 'Dal Makhani', price: 220, category: 'indian', isVeg: true, image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80', emoji: '🥘', prepTime: 20, available: true, description: 'Slow-cooked whole black lentils simmered overnight with butter and fresh cream' },
+  { id: 'ITEM-105', name: 'Butter Naan', price: 45, category: 'indian', isVeg: true, image: 'https://images.unsplash.com/photo-1626074353765-517a681e40be?auto=format&fit=crop&w=600&q=80', emoji: '🫓', prepTime: 5, available: true, description: 'Traditional clay-tandoor blistered leavened flatbread brushed with melted butter' },
+  { id: 'ITEM-106', name: 'Garlic Naan', price: 60, category: 'indian', isVeg: true, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80', emoji: '🧄', prepTime: 5, available: true, description: 'Tandoor flatbread infused with roasted minced garlic, coriander, and butter' },
+  { id: 'ITEM-107', name: 'Tandoori Chicken', price: 340, category: 'indian', isVeg: false, image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=600&q=80', emoji: '🍗', prepTime: 25, available: true, description: 'Half chicken marinated in Kashmiri red chili and yogurt, roasted in tandoor' },
+
   // Pizza
-  { id: 'ITEM-201', name: 'Margherita Pizza', price: 249, category: 'pizza', emoji: '🍕', prepTime: 18, available: true, description: 'Classic tomato, mozzarella, basil' },
-  { id: 'ITEM-202', name: 'Farmhouse Pizza', price: 299, category: 'pizza', emoji: '🍕', prepTime: 20, available: true, description: 'Loaded with fresh vegetables' },
-  { id: 'ITEM-203', name: 'Pepperoni Pizza', price: 349, category: 'pizza', emoji: '🍕', prepTime: 18, available: true, description: 'Spicy pepperoni with cheese' },
+  { id: 'ITEM-201', name: 'Margherita Pizza', price: 249, category: 'pizza', isVeg: true, image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80', emoji: '🍕', prepTime: 18, available: true, description: 'San Marzano tomato sauce, fresh mozzarella cheese, and basil on hand-stretched crust' },
+  { id: 'ITEM-202', name: 'Farmhouse Pizza', price: 299, category: 'pizza', isVeg: true, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80', emoji: '🍕', prepTime: 20, available: true, description: 'Loaded with bell peppers, red onions, mushrooms, black olives, and sweet corn' },
+  { id: 'ITEM-203', name: 'Pepperoni Pizza', price: 349, category: 'pizza', isVeg: false, image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80', emoji: '🍕', prepTime: 18, available: true, description: 'Artisanal sliced pepperoni layered over melted mozzarella and spiced marinara' },
+
   // Burgers
-  { id: 'ITEM-301', name: 'Veg Burger', price: 149, category: 'burgers', emoji: '🍔', prepTime: 10, available: true, description: 'Crispy patty with fresh veggies' },
-  { id: 'ITEM-302', name: 'Chicken Burger', price: 189, category: 'burgers', emoji: '🍔', prepTime: 12, available: true, description: 'Juicy chicken patty with special sauce' },
-  { id: 'ITEM-303', name: 'Double Cheese Burger', price: 229, category: 'burgers', emoji: '🍔', prepTime: 14, available: true, description: 'Double patty with extra cheese' },
+  { id: 'ITEM-301', name: 'Veg Burger', price: 149, category: 'burgers', isVeg: true, image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80', emoji: '🍔', prepTime: 10, available: true, description: 'Crisp seasoned vegetable patty with lettuce, tomatoes, and house mayo on toasted brioche' },
+  { id: 'ITEM-302', name: 'Chicken Burger', price: 189, category: 'burgers', isVeg: false, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80', emoji: '🍔', prepTime: 12, available: true, description: 'Juicy spiced grilled chicken breast fillet with cheddar cheese and smoked paprika dressing' },
+  { id: 'ITEM-303', name: 'Double Cheese Burger', price: 229, category: 'burgers', isVeg: false, image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80', emoji: '🍔', prepTime: 14, available: true, description: 'Double flame-grilled patties, double aged cheddar, caramelized onions, and house pickle' },
+
   // Snacks
-  { id: 'ITEM-401', name: 'Masala Fries', price: 129, category: 'snacks', emoji: '🍟', prepTime: 8, available: true, description: 'Crispy fries with Indian spices' },
-  { id: 'ITEM-402', name: 'Chicken Wings', price: 249, category: 'snacks', emoji: '🍗', prepTime: 15, available: true, description: 'Spicy buffalo-style wings' },
-  { id: 'ITEM-403', name: 'Paneer Tikka Bites', price: 199, category: 'snacks', emoji: '🧀', prepTime: 12, available: true, description: 'Bite-sized grilled paneer' },
-  { id: 'ITEM-404', name: 'Samosa (2 pcs)', price: 80, category: 'snacks', emoji: '🥟', prepTime: 5, available: true, description: 'Crispy pastry with spiced potato filling' },
+  { id: 'ITEM-401', name: 'Masala Fries', price: 129, category: 'snacks', isVeg: true, image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80', emoji: '🍟', prepTime: 8, available: true, description: 'Golden crispy skin-on potato fries dusted with peri-peri chaat masala spice blend' },
+  { id: 'ITEM-402', name: 'Chicken Wings', price: 249, category: 'snacks', isVeg: false, image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=80', emoji: '🍗', prepTime: 15, available: true, description: 'Crispy fried chicken wings tossed in tangy spicy barbecue glaze with ranch dip' },
+  { id: 'ITEM-403', name: 'Paneer Tikka Bites', price: 199, category: 'snacks', isVeg: true, image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80', emoji: '🧀', prepTime: 12, available: true, description: 'Bite-sized roasted cottage cheese cubes skewered with mint chutney drizzle' },
+  { id: 'ITEM-404', name: 'Samosa (2 pcs)', price: 80, category: 'snacks', isVeg: true, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80', emoji: '🥟', prepTime: 5, available: true, description: 'Flaky golden pastry cones filled with spicy potato, green peas, and tamarind chutney' },
+
   // Drinks
-  { id: 'ITEM-501', name: 'Cold Coffee', price: 149, category: 'drinks', emoji: '☕', prepTime: 5, available: true, description: 'Creamy iced coffee blend' },
-  { id: 'ITEM-502', name: 'Mango Lassi', price: 129, category: 'drinks', emoji: '🥭', prepTime: 5, available: true, description: 'Sweet mango yogurt drink' },
-  { id: 'ITEM-503', name: 'Fresh Lime Soda', price: 89, category: 'drinks', emoji: '🍋', prepTime: 3, available: true, description: 'Refreshing lemon with soda' },
-  { id: 'ITEM-504', name: 'Masala Chai', price: 49, category: 'drinks', emoji: '🫖', prepTime: 5, available: true, description: 'Traditional spiced tea' },
+  { id: 'ITEM-501', name: 'Cold Coffee', price: 149, category: 'drinks', isVeg: true, image: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80', emoji: '☕', prepTime: 5, available: true, description: 'Blended espresso with chilled creamy milk, chocolate drizzle, and vanilla ice cream scoop' },
+  { id: 'ITEM-502', name: 'Mango Lassi', price: 129, category: 'drinks', isVeg: true, image: 'https://images.unsplash.com/photo-1570696516188-ade861b84a49?auto=format&fit=crop&w=600&q=80', emoji: '🥭', prepTime: 5, available: true, description: 'Thick Alphonso mango puree blended with chilled artisan yogurt and cardamom' },
+  { id: 'ITEM-503', name: 'Fresh Lime Soda', price: 89, category: 'drinks', isVeg: true, image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80', emoji: '🍋', prepTime: 3, available: true, description: 'Sparkling club soda with freshly squeezed lime juice, mint leaves, and rock salt' },
+  { id: 'ITEM-504', name: 'Masala Chai', price: 49, category: 'drinks', isVeg: true, image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80', emoji: '🫖', prepTime: 5, available: true, description: 'Authentic Indian Assam tea brewed with crushed ginger, green cardamom, and fresh milk' },
+
   // Pasta
-  { id: 'ITEM-601', name: 'Pasta Alfredo', price: 249, category: 'pasta', emoji: '🍝', prepTime: 15, available: true, description: 'Creamy white sauce pasta' },
-  { id: 'ITEM-602', name: 'Penne Arrabbiata', price: 229, category: 'pasta', emoji: '🍝', prepTime: 15, available: true, description: 'Spicy tomato sauce penne' },
+  { id: 'ITEM-601', name: 'Pasta Alfredo', price: 249, category: 'pasta', isVeg: true, image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=600&q=80', emoji: '🍝', prepTime: 15, available: true, description: 'Fettuccine pasta in rich creamy garlic butter parmesan sauce with sautéed mushrooms' },
+  { id: 'ITEM-602', name: 'Penne Arrabbiata', price: 229, category: 'pasta', isVeg: true, image: 'https://images.unsplash.com/photo-1621996346565-e3d5d628169e?auto=format&fit=crop&w=600&q=80', emoji: '🍝', prepTime: 15, available: true, description: 'Al dente penne in fiery plum tomato sauce, garlic, red chili flakes, and extra virgin olive oil' },
+
   // Desserts
-  { id: 'ITEM-701', name: 'Gulab Jamun', price: 99, category: 'desserts', emoji: '🍩', prepTime: 5, available: true, description: 'Warm milk dumplings in syrup' },
-  { id: 'ITEM-702', name: 'Chocolate Brownie', price: 159, category: 'desserts', emoji: '🍫', prepTime: 5, available: true, description: 'Rich chocolate with ice cream' },
-  { id: 'ITEM-703', name: 'Ras Malai', price: 129, category: 'desserts', emoji: '🍮', prepTime: 5, available: true, description: 'Soft paneer in flavored milk' },
+  { id: 'ITEM-701', name: 'Gulab Jamun', price: 99, category: 'desserts', isVeg: true, image: 'https://images.unsplash.com/photo-1605197586548-932f91dfeb83?auto=format&fit=crop&w=600&q=80', emoji: '🍩', prepTime: 5, available: true, description: 'Warm khoya dumplings soaked in rose and saffron sugar syrup, garnished with pistachios' },
+  { id: 'ITEM-702', name: 'Chocolate Brownie', price: 159, category: 'desserts', isVeg: true, image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80', emoji: '🍫', prepTime: 5, available: true, description: 'Warm Belgian dark chocolate walnut brownie served with vanilla bean ice cream' },
+  { id: 'ITEM-703', name: 'Ras Malai', price: 129, category: 'desserts', isVeg: true, image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80', emoji: '🍮', prepTime: 5, available: true, description: 'Delicate cottage cheese discs steeped in condensed saffron milk and almond slivers' },
+
   // Salads
-  { id: 'ITEM-801', name: 'Caesar Salad', price: 199, category: 'salads', emoji: '🥗', prepTime: 8, available: true, description: 'Classic Caesar with croutons' },
-  { id: 'ITEM-802', name: 'Greek Salad', price: 179, category: 'salads', emoji: '🥗', prepTime: 8, available: true, description: 'Fresh Mediterranean salad' },
+  { id: 'ITEM-801', name: 'Caesar Salad', price: 199, category: 'salads', isVeg: true, image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=600&q=80', emoji: '🥗', prepTime: 8, available: true, description: 'Crispy romaine lettuce, herb croutons, and shaved parmesan tossed in creamy Caesar dressing' },
+  { id: 'ITEM-802', name: 'Greek Salad', price: 179, category: 'salads', isVeg: true, image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80', emoji: '🥗', prepTime: 8, available: true, description: 'Fresh cucumbers, tomatoes, bell peppers, Kalamata olives, and Greek feta in oregano vinaigrette' },
+
   // Chinese
-  { id: 'ITEM-901', name: 'Veg Manchurian', price: 189, category: 'chinese', emoji: '🥡', prepTime: 15, available: true, description: 'Crispy veggie balls in spicy sauce' },
-  { id: 'ITEM-902', name: 'Chicken Fried Rice', price: 219, category: 'chinese', emoji: '🍚', prepTime: 12, available: true, description: 'Wok-tossed rice with chicken' },
-  { id: 'ITEM-903', name: 'Hakka Noodles', price: 179, category: 'chinese', emoji: '🍜', prepTime: 12, available: true, description: 'Stir-fried noodles with vegetables' },
+  { id: 'ITEM-901', name: 'Veg Manchurian', price: 189, category: 'chinese', isVeg: true, image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80', emoji: '🥡', prepTime: 15, available: true, description: 'Golden fried vegetable dumplings simmered in savory garlic, soy, and spring onion gravy' },
+  { id: 'ITEM-902', name: 'Chicken Fried Rice', price: 219, category: 'chinese', isVeg: false, image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80', emoji: '🍚', prepTime: 12, available: true, description: 'Wok-tossed long-grain rice with diced chicken, scrambled eggs, and seasonal vegetables' },
+  { id: 'ITEM-903', name: 'Hakka Noodles', price: 179, category: 'chinese', isVeg: true, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80', emoji: '🍜', prepTime: 12, available: true, description: 'Wok-tossed noodles with crunchy julienne vegetables, white pepper, and light soy sauce' },
 ];
 
 // ---- Tables ----

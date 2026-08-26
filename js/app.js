@@ -75,6 +75,13 @@ const ICONS = {
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
   banknote: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
   chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
+  store: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>',
+  arrowUpRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>',
+  percent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+  coffee: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>',
+  alertCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>',
 };
 
 function icon(name, size = 20) {
@@ -87,7 +94,7 @@ function icon(name, size = 20) {
 const routes = {
   login: { title: 'Sign In', group: '', render: renderLogin },
   dashboard: { title: 'Dashboard', group: 'Operations', render: renderDashboard },
-  pos: { title: 'Point of Sale', group: 'Operations', render: renderPOS },
+  pos: { title: 'Order Entry', group: 'Operations', render: renderPOS },
   tables: { title: 'Table Management', group: 'Operations', render: renderTables },
   kitchen: { title: 'Kitchen Display', group: 'Operations', render: renderKitchen },
   orders: { title: 'Orders', group: 'Operations', render: renderOrders },
@@ -187,10 +194,10 @@ function renderAppShell(container, route) {
         </a>
       </div>
       <div class="sidebar-nav">
-        <div class="sidebar-section-title">Operations</div>
-        ${sidebarItem('dashboard', 'Dashboard', 'layoutDashboard', route)}
-        ${sidebarItem('pos', 'POS', 'shoppingCart', route)}
-        ${sidebarItem('tables', 'Tables', 'grid', route)}
+      <div class="sidebar-section-title">Operations</div>
+      ${sidebarItem('dashboard', 'Dashboard', 'layoutDashboard', route)}
+      ${sidebarItem('pos', 'Order Entry', 'shoppingCart', route)}
+      ${sidebarItem('tables', 'Tables', 'grid', route)}
         ${sidebarItem('kitchen', 'Kitchen', 'chefHat', route, pendingKitchen > 0 ? pendingKitchen : null)}
         ${sidebarItem('orders', 'Orders', 'clipboardList', route)}
         <div class="sidebar-section-title">Management</div>
@@ -301,7 +308,12 @@ function sidebarItem(route, label, iconName, currentRoute, badgeCount = null) {
 function renderNotifications() {
   const notifs = store.state.notifications.slice(0, 8);
   if (notifs.length === 0) {
-    return '<div class="empty-state" style="padding:var(--space-6)"><div class="empty-state-text">No notifications</div></div>';
+    return renderEmptyState({
+      iconName: 'bell',
+      title: 'All caught up',
+      description: 'You have no unread operational alerts or notifications.',
+      glass: false
+    });
   }
   const typeColors = { new_order: 'var(--color-info-bg)', low_inventory: 'var(--color-warning-bg)', payment: 'var(--color-success-bg)', table_reservation: 'var(--color-primary-lighter)', kitchen_delay: 'var(--color-error-bg)', staff_event: 'var(--color-surface-hover)' };
   const typeIcons = { new_order: 'clipboardList', low_inventory: 'alertTriangle', payment: 'wallet', table_reservation: 'grid', kitchen_delay: 'clock', staff_event: 'user' };
@@ -458,11 +470,15 @@ function performSearch(query) {
   }
 
   // Search products
-  const matchedProducts = state.menuItems.filter(i => i.name.toLowerCase().includes(q)).slice(0, 3);
+  const matchedProducts = state.menuItems.filter(i => i.name.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)).slice(0, 3);
   if (matchedProducts.length) {
-    html += '<div class="search-results-group"><div class="search-results-title">Products</div>';
+    html += '<div class="search-results-group"><div class="search-results-title">Menu Dishes</div>';
     matchedProducts.forEach(p => {
-      html += `<div class="search-result-item" data-search-nav="menu">${p.emoji} <span>${p.name} — ${formatINR(p.price)}</span></div>`;
+      html += `<div class="search-result-item" data-search-nav="pos" style="display:flex;align-items:center;gap:10px">
+        <img src="${p.image}" alt="${escapeHtml(p.name)}" style="width:28px;height:28px;border-radius:4px;object-fit:cover">
+        <div style="flex:1"><strong>${escapeHtml(p.name)}</strong> <span style="font-size:11px;color:var(--color-text-tertiary)">(${p.category})</span></div>
+        <span style="font-family:var(--dd-font-mono);font-weight:700">${formatINR(p.price)}</span>
+      </div>`;
     });
     html += '</div>';
   }
@@ -472,7 +488,7 @@ function performSearch(query) {
   if (matchedCustomers.length) {
     html += '<div class="search-results-group"><div class="search-results-title">Customers</div>';
     matchedCustomers.forEach(c => {
-      html += `<div class="search-result-item" data-search-nav="customers">${icon('user', 16)} <span>${c.name} — ${c.phone}</span></div>`;
+      html += `<div class="search-result-item" data-search-nav="customers">${icon('user', 16)} <span>${escapeHtml(c.name)} — ${c.phone}</span></div>`;
     });
     html += '</div>';
   }
@@ -482,7 +498,17 @@ function performSearch(query) {
   if (matchedTables.length) {
     html += '<div class="search-results-group"><div class="search-results-title">Tables</div>';
     matchedTables.forEach(t => {
-      html += `<div class="search-result-item" data-search-nav="tables">${icon('grid', 16)} <span>Table ${t.number} — ${t.floor} — ${t.status}</span></div>`;
+      html += `<div class="search-result-item" data-search-nav="tables">${icon('grid', 16)} <span>Table ${t.number} — ${t.floor} Floor (${t.status})</span></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Search staff
+  const matchedStaff = state.staff.filter(s => s.name.toLowerCase().includes(q) || s.role.toLowerCase().includes(q)).slice(0, 3);
+  if (matchedStaff.length) {
+    html += '<div class="search-results-group"><div class="search-results-title">Staff Members</div>';
+    matchedStaff.forEach(s => {
+      html += `<div class="search-result-item" data-search-nav="staff">${icon('userCog', 16)} <span>${escapeHtml(s.name)} — ${s.role} (${s.shift} Shift)</span></div>`;
     });
     html += '</div>';
   }
@@ -502,47 +528,118 @@ function performSearch(query) {
   });
 }
 
+// Global Keyboard Shortcuts
+window.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    openSearchOverlay();
+  } else if (e.key === 'Escape') {
+    closeSearchOverlay();
+    closeModal();
+    closeDrawer();
+  }
+});
+
 // ==========================================
-// PAGE: Login
+// PAGE: Login / Open Shift (Reference B: 888 × 551 Viewport)
 // ==========================================
 function renderLogin(container) {
   container.innerHTML = `
     <div class="login-page">
-      <div class="login-card">
-        <div class="login-logo">
-          <div class="login-logo-icon">${icon('utensils', 28)}</div>
-          <span class="login-logo-text">DineDesk</span>
-        </div>
-        <h2 class="login-title">Welcome Back</h2>
-        <p class="login-subtitle">Sign in to your restaurant dashboard</p>
-        <div class="login-error" id="loginError">
-          ${icon('alertTriangle', 16)} <span>Invalid email or password. Please try again.</span>
-        </div>
-        <form class="login-form" id="loginForm">
-          <div class="form-group">
-            <label class="form-label" for="loginEmail">Email Address</label>
-            <input class="form-input" type="email" id="loginEmail" placeholder="admin@dinedesk.com" value="admin@dinedesk.com" required autocomplete="email">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="loginPassword">Password</label>
-            <div class="input-group">
-              <input class="form-input" type="password" id="loginPassword" placeholder="Enter your password" value="admin123" required autocomplete="current-password">
-              <button type="button" class="input-group-action" id="togglePassword" aria-label="Toggle password visibility">${icon('eye', 18)}</button>
+      <div class="login-split-container">
+        <!-- Left Hero Brand Panel -->
+        <div class="login-left-hero">
+          <div class="login-hero-top">
+            <div class="login-hero-logo">
+              <div class="login-hero-logo-icon">${icon('utensils', 20)}</div>
+              <span class="login-hero-logo-text">DineDesk</span>
             </div>
           </div>
-          <div class="login-options">
-            <label class="checkbox">
-              <input type="checkbox" checked> Remember me
-            </label>
-            <a href="#" class="login-forgot" onclick="event.preventDefault()">Forgot Password?</a>
+
+          <div class="login-hero-mid">
+            <h1 class="login-hero-headline">Your whole floor,<br>on one screen.</h1>
+            <p class="login-hero-desc">Real-time tables, instant KDS synchronization, and lightning-fast billing built for high-volume restaurant service.</p>
+            <div class="login-hero-chips">
+              <span class="login-hero-chip">⚡ 2.4s Avg Bill</span>
+              <span class="login-hero-chip">🔄 Live KDS Sync</span>
+              <span class="login-hero-chip">🛡️ Cloud Offline</span>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginSubmitBtn">
-            Sign In
-          </button>
-        </form>
-        <p style="text-align:center;margin-top:var(--space-5);font-size:var(--font-size-sm);color:var(--color-text-tertiary)">
-          Demo: admin@dinedesk.com / admin123
-        </p>
+
+          <div class="login-hero-bottom">
+            <div class="login-hero-metrics">
+              <div>
+                <div class="login-metric-val">₹42,580</div>
+                <div class="login-metric-lbl">Today's Revenue</div>
+              </div>
+              <div>
+                <div class="login-metric-val">156</div>
+                <div class="login-metric-lbl">Live Orders</div>
+              </div>
+              <div>
+                <div class="login-metric-val">12/16</div>
+                <div class="login-metric-lbl">Active Tables</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Shift Form Panel -->
+        <div class="login-right-panel">
+          <div class="login-shift-badge">
+            <span class="ops-dot green"></span> Active Shift · Lunch Service (11:00 - 16:00)
+          </div>
+          <h2 class="login-right-title">Welcome back</h2>
+          <p class="login-right-desc">Sign in to your station to start or continue your shift.</p>
+
+          <div class="login-error" id="loginError" style="margin-bottom:14px">
+            ${icon('alertTriangle', 16)} <span>Invalid email or password. Please try again.</span>
+          </div>
+
+          <form class="login-form" id="loginForm">
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label" for="loginEmail" style="font-size:12.5px;font-weight:600">Email Address</label>
+              <input class="form-input" type="email" id="loginEmail" placeholder="admin@dinedesk.com" value="admin@dinedesk.com" required autocomplete="email" style="height:42px;border-radius:8px">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label" for="loginPassword" style="font-size:12.5px;font-weight:600">Password</label>
+              <div class="input-group">
+                <input class="form-input" type="password" id="loginPassword" placeholder="Enter your password" value="admin123" required autocomplete="current-password" style="height:42px;border-radius:8px">
+                <button type="button" class="input-group-action" id="togglePassword" aria-label="Toggle password visibility">${icon('eye', 18)}</button>
+              </div>
+            </div>
+            <div class="login-options" style="margin-bottom:18px">
+              <label class="checkbox" style="font-size:12.5px;color:var(--dd-text-secondary)">
+                <input type="checkbox" checked> Keep me signed in
+              </label>
+              <a href="#" class="login-forgot" onclick="event.preventDefault()" style="font-size:12.5px;color:var(--dd-primary);font-weight:500">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn" style="height:44px;font-size:14px;font-weight:700;border-radius:8px">
+              Open my shift →
+            </button>
+          </form>
+
+          <div class="login-divider-row">
+            <span>OR QUICK SIGN IN</span>
+          </div>
+
+          <div class="login-quick-actions">
+            <button type="button" class="login-quick-btn" onclick="showToast('Badge reader ready — scan staff NFC card', 'info')">
+              ${icon('userCheck', 15)} Scan staff badge
+            </button>
+            <button type="button" class="login-quick-btn" onclick="showToast('PIN mode activated', 'info')">
+              ${icon('hash', 15)} 4-digit PIN
+            </button>
+          </div>
+
+          <div class="login-staff-active-indicator">
+            <span class="ops-dot green"></span> 8 Staff Members Currently on Shift
+          </div>
+
+          <p style="text-align:center;margin-top:14px;font-size:11.5px;color:var(--dd-text-muted)">
+            Demo Credentials: <strong>admin@dinedesk.com</strong> / <strong>admin123</strong>
+          </p>
+        </div>
       </div>
     </div>
   `;
@@ -586,95 +683,358 @@ function renderLogin(container) {
 }
 
 // ==========================================
-// PAGE: Dashboard
+// PAGE: Dashboard (Restaurant Operations Command Center)
 // ==========================================
 function renderDashboard(container) {
   const metrics = store.getDashboardMetrics();
+  const { orders, tables, inventory } = store.state;
+
+  // Filter or compute operational metrics
+  const activeOrders = orders.filter(o => o.status === 'Pending' || o.status === 'Preparing');
+  const delayedOrders = orders.filter(o => {
+    if (o.status !== 'Pending' && o.status !== 'Preparing') return false;
+    const mins = (Date.now() - new Date(o.createdAt).getTime()) / 60000;
+    return mins > 20;
+  });
+  const reservedTables = tables.filter(t => t.status === 'Reserved');
+  const availableTables = tables.filter(t => t.status === 'Available');
+  const occupiedTables = tables.filter(t => t.status === 'Occupied');
+  const lowStockItems = inventory.filter(i => i.currentStock <= i.reorderLevel);
+
+  // Floor occupancy counts
+  const floors = ['Ground', 'First', 'Terrace'];
+  const floorStats = floors.map(f => {
+    const floorTables = tables.filter(t => t.floor === f);
+    const floorOcc = floorTables.filter(t => t.status === 'Occupied').length;
+    const pct = floorTables.length ? Math.round((floorOcc / floorTables.length) * 100) : 0;
+    return { floor: f, occupied: floorOcc, total: floorTables.length, pct };
+  });
+
+  // Top ranked items with revenue calculations
+  const rankedItems = [
+    { rank: '01', name: 'Butter Chicken', orders: 124, revenue: 39680, pct: 100 },
+    { rank: '02', name: 'Paneer Tikka', orders: 98, revenue: 25480, pct: 79 },
+    { rank: '03', name: 'Chicken Biryani', orders: 91, revenue: 25480, pct: 73 },
+    { rank: '04', name: 'Margherita Pizza', orders: 76, revenue: 18924, pct: 61 },
+    { rank: '05', name: 'Masala Fries', orders: 64, revenue: 8256, pct: 51 },
+    { rank: '06', name: 'Cold Coffee', orders: 52, revenue: 7748, pct: 42 },
+  ];
+
+  // Kitchen status breakdown
+  const kNew = orders.filter(o => o.status === 'Pending').length;
+  const kPrep = orders.filter(o => o.status === 'Preparing').length;
+  const kReady = orders.filter(o => o.status === 'Ready').length;
+  const kDelayed = delayedOrders.length;
 
   container.innerHTML = `
-    <div class="dashboard-grid">
-      <div class="kpi-row">
-        <div class="kpi-card">
-          <div class="kpi-icon green">${icon('dollarSign')}</div>
-          <div class="kpi-info">
-            <div class="kpi-label">Today's Revenue</div>
-            <div class="kpi-value">${formatINR(metrics.revenue)}</div>
-            <div class="kpi-trend up">${icon('trendingUp', 14)} +12.5% from yesterday</div>
+    <div class="dashboard-page">
+      <!-- Top Command Center Header -->
+      <div class="dashboard-header">
+        <div class="dashboard-header-left">
+          <h1 class="dashboard-header-title">Dashboard</h1>
+          <p class="dashboard-header-subtitle">Today's restaurant performance & live operational overview</p>
+        </div>
+        <div class="dashboard-header-actions">
+          <div class="input-group" style="width:auto">
+            <select class="form-select form-select-sm" id="dashDateRange" style="height:32px;font-size:var(--font-size-xs)">
+              <option value="today">Today (25 Aug)</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+          <div class="input-group" style="width:auto">
+            <select class="form-select form-select-sm" id="dashOutlet" style="height:32px;font-size:var(--font-size-xs)">
+              <option>Main Dining</option>
+              <option>Rooftop Terrace</option>
+              <option>Express Takeaway</option>
+            </select>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="dashRefreshBtn" title="Refresh metrics" style="height:32px">
+            ${icon('refresh', 14)} Refresh
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="navigate('pos')" style="height:32px">
+            ${icon('plus', 14)} New Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Single Continuous 4-Column KPI Surface -->
+      <div class="kpi-surface">
+        <div class="kpi-col">
+          <div class="kpi-col-header">
+            <span class="kpi-col-label">Today's Revenue</span>
+            <span class="kpi-col-icon">${icon('dollarSign', 16)}</span>
+          </div>
+          <div class="kpi-col-value">${formatINR(metrics.revenue)}</div>
+          <div class="kpi-col-footer">
+            <span class="kpi-trend-pill up">${icon('trendingUp', 12)} +12.8%</span>
+            <span class="kpi-trend-sub">vs yesterday</span>
           </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue">${icon('clipboardList')}</div>
-          <div class="kpi-info">
-            <div class="kpi-label">Orders</div>
-            <div class="kpi-value">${metrics.orderCount}</div>
-            <div class="kpi-trend up">${icon('trendingUp', 14)} +8.3% from yesterday</div>
+
+        <div class="kpi-col">
+          <div class="kpi-col-header">
+            <span class="kpi-col-label">Total Orders</span>
+            <span class="kpi-col-icon">${icon('clipboardList', 16)}</span>
+          </div>
+          <div class="kpi-col-value">${metrics.orderCount}</div>
+          <div class="kpi-col-footer">
+            <span class="kpi-trend-pill up">${icon('trendingUp', 12)} +8.3%</span>
+            <span class="kpi-trend-sub">vs yesterday</span>
           </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon orange">${icon('users')}</div>
-          <div class="kpi-info">
-            <div class="kpi-label">Customers</div>
-            <div class="kpi-value">${metrics.customerCount}</div>
-            <div class="kpi-trend up">${icon('trendingUp', 14)} +5.2% from yesterday</div>
+
+        <div class="kpi-col">
+          <div class="kpi-col-header">
+            <span class="kpi-col-label">Average Order Value</span>
+            <span class="kpi-col-icon">${icon('percent', 16)}</span>
+          </div>
+          <div class="kpi-col-value">${formatINR(metrics.orderCount ? Math.round(metrics.revenue / metrics.orderCount) : 0)}</div>
+          <div class="kpi-col-footer">
+            <span class="kpi-trend-pill up">${icon('trendingUp', 12)} +4.1%</span>
+            <span class="kpi-trend-sub">target ₹250</span>
           </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon red">${icon('grid')}</div>
-          <div class="kpi-info">
-            <div class="kpi-label">Active Tables</div>
-            <div class="kpi-value">${metrics.activeTables} / ${metrics.totalTables}</div>
-            <div class="kpi-trend down">${icon('trendingDown', 14)} ${Math.round(metrics.activeTables/metrics.totalTables*100)}% occupancy</div>
+
+        <div class="kpi-col">
+          <div class="kpi-col-header">
+            <span class="kpi-col-label">Table Occupancy</span>
+            <span class="kpi-col-icon">${icon('grid', 16)}</span>
+          </div>
+          <div class="kpi-col-value">${Math.round(metrics.activeTables / metrics.totalTables * 100)}%</div>
+          <div class="kpi-col-footer">
+            <span class="kpi-trend-pill ${metrics.activeTables > 0 ? 'up' : 'down'}">${metrics.activeTables} / ${metrics.totalTables} active</span>
+            <span class="kpi-trend-sub">${metrics.totalTables - metrics.activeTables} available</span>
           </div>
         </div>
       </div>
 
-      <div class="charts-row">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Revenue Overview</h3>
-            <div class="tabs-pill">
-              <span class="tab-pill active" data-range="7d">7 Days</span>
-              <span class="tab-pill" data-range="30d">30 Days</span>
-              <span class="tab-pill" data-range="month">Month</span>
+      <!-- Asymmetrical Balanced Grid -->
+      <div class="dashboard-grid-asym">
+        <!-- Row 1: Revenue Overview (62%) + Operations Snapshot (38%) -->
+        <div class="grid-row-rev-ops">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Revenue Overview</h3>
+                <span style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">₹278,980 period total · Avg ₹39.8k/day</span>
+              </div>
+              <div class="tabs-pill">
+                <span class="tab-pill active" data-range="7d">7D</span>
+                <span class="tab-pill" data-range="30d">30D</span>
+                <span class="tab-pill" data-range="90d">90D</span>
+              </div>
+            </div>
+            <div class="card-body" style="height:250px">
+              <canvas id="revenueChart"></canvas>
             </div>
           </div>
-          <div class="card-body"><canvas id="revenueChart" height="280"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><h3 class="card-title">Order Types</h3></div>
-          <div class="card-body"><canvas id="orderTypeChart" height="280"></canvas></div>
-        </div>
-      </div>
 
-      <div class="dashboard-bottom">
-        <div class="card">
-          <div class="card-header"><h3 class="card-title">Popular Items</h3></div>
-          <div class="card-body"><canvas id="popularItemsChart" height="220"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Recent Orders</h3>
-            <button class="btn btn-ghost btn-sm" onclick="navigate('orders')">View All</button>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Operations Snapshot</h3>
+              <span class="badge badge-success badge-dot">Live Shift</span>
+            </div>
+            <div class="card-body">
+              <div class="ops-snapshot-list">
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot amber"></span> Occupied Tables</span>
+                  <span class="ops-snapshot-val">${occupiedTables.length} / ${tables.length}</span>
+                </div>
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot green"></span> Available Tables</span>
+                  <span class="ops-snapshot-val">${availableTables.length}</span>
+                </div>
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot blue"></span> Reserved Tables</span>
+                  <span class="ops-snapshot-val">${reservedTables.length}</span>
+                </div>
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot amber"></span> Kitchen In-Progress</span>
+                  <span class="ops-snapshot-val">${activeOrders.length} orders</span>
+                </div>
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot red"></span> Delayed Orders (&gt;20m)</span>
+                  <span class="ops-snapshot-val" style="color:var(--color-error)">${kDelayed}</span>
+                </div>
+                <div class="ops-snapshot-row">
+                  <span class="ops-snapshot-label"><span class="ops-dot gray"></span> Active Staff On Duty</span>
+                  <span class="ops-snapshot-val">7 / 10</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body" style="padding:0">
-            <table class="data-table">
-              <thead><tr><th>Order</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
-              <tbody>
-                ${store.state.orders.slice(0, 5).map(o => `
+        </div>
+
+        <!-- Row 2: Recent Orders Enterprise Table (62%) + Top Selling Items (38%) -->
+        <div class="grid-row-orders-top">
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex;align-items:center;gap:var(--space-3)">
+                <h3 class="card-title">Recent Orders</h3>
+                <input type="text" placeholder="Search orders..." id="dashOrderSearch" class="form-input form-input-sm" style="width:170px;height:30px;font-size:var(--font-size-xs)">
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('orders')">View All →</button>
+            </div>
+            <div class="card-body" style="padding:0;overflow-x:auto">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <td style="font-weight:var(--font-weight-semibold)">${o.id}</td>
-                    <td><span class="badge badge-neutral">${o.orderType}</span></td>
-                    <td>${formatINR(o.total)}</td>
-                    <td><span class="badge ${statusBadgeClass(o.status)}">${o.status}</span></td>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Table</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Time</th>
                   </tr>
+                </thead>
+                <tbody id="dashOrdersTbody">
+                  ${orders.slice(0, 6).map(o => {
+                    const cust = o.customerId ? store.state.customers.find(c => c.id === o.customerId) : null;
+                    const tbl = o.tableId ? store.state.tables.find(t => t.id === o.tableId) : null;
+                    return `
+                      <tr>
+                        <td style="font-weight:var(--font-weight-semibold);font-family:var(--dd-font-mono);font-size:12px">${o.id}</td>
+                        <td style="color:var(--color-text-primary);font-weight:var(--font-weight-medium)">${cust ? escapeHtml(cust.name) : 'Walk-in'}</td>
+                        <td><span class="badge badge-neutral">${tbl ? tbl.number : o.orderType}</span></td>
+                        <td>${o.itemCount || (o.items ? o.items.reduce((s,i)=>s+i.quantity,0) : 1)} items</td>
+                        <td style="font-weight:var(--font-weight-semibold)">${formatINR(o.total)}</td>
+                        <td><span class="badge ${o.paymentStatus === 'Paid' ? 'badge-success' : 'badge-warning'}">${o.paymentStatus}</span></td>
+                        <td><span class="badge ${statusBadgeClass(o.status)}">${o.status}</span></td>
+                        <td style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">${timeAgo(o.createdAt)}</td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Top Selling Items</h3>
+              <span style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">Ranked by Volume</span>
+            </div>
+            <div class="card-body">
+              <div class="ranked-items-list">
+                ${rankedItems.map(item => `
+                  <div class="ranked-item-row">
+                    <div class="ranked-item-meta">
+                      <span class="ranked-item-name"><span class="ranked-badge">${item.rank}</span> ${item.name}</span>
+                      <span class="ranked-item-stats">${item.orders} orders · ${formatINR(item.revenue)}</span>
+                    </div>
+                    <div class="ranked-progress-track">
+                      <div class="ranked-progress-fill" style="width:${item.pct}%"></div>
+                    </div>
+                  </div>
                 `).join('')}
-              </tbody>
-            </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Low Stock Alerts + Kitchen Status + Table Occupancy by Floor -->
+        <div class="grid-row-bottom-3">
+          <!-- Low Stock Actionable Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" style="display:flex;align-items:center;gap:var(--space-1-5)">
+                ${icon('alertCircle', 16)} Low Stock Alerts
+              </h3>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('inventory')">Inventory →</button>
+            </div>
+            <div class="card-body">
+              <div class="low-stock-list">
+                ${lowStockItems.slice(0, 3).map(i => `
+                  <div class="low-stock-item">
+                    <div class="low-stock-info">
+                      <span class="low-stock-name">${escapeHtml(i.name)}</span>
+                      <span class="low-stock-meta"><span style="color:var(--color-warning);font-weight:var(--font-weight-semibold)">${i.currentStock} ${i.unit} left</span> · Min ${i.reorderLevel} ${i.unit}</span>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 8px" onclick="store.adjustStock('${i.id}', ${i.reorderLevel * 2});showToast('Reordered 2x stock for ${escapeHtml(i.name)}','success');renderDashboard(document.getElementById('pageContent'))">
+                      Reorder
+                    </button>
+                  </div>
+                `).join('')}
+                ${lowStockItems.length === 0 ? '<div class="empty-state" style="padding:var(--space-4)"><div class="empty-state-text">All items sufficiently stocked</div></div>' : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- Kitchen Status Operational Blocks -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" style="display:flex;align-items:center;gap:var(--space-1-5)">
+                ${icon('chefHat', 16)} Kitchen Status
+              </h3>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('kitchen')">Display →</button>
+            </div>
+            <div class="card-body">
+              <div class="kitchen-status-grid">
+                <div class="kitchen-status-tile" onclick="navigate('kitchen')">
+                  <span class="kitchen-status-tile-title"><span class="ops-dot amber"></span> New</span>
+                  <span class="kitchen-status-tile-count">${kNew}</span>
+                </div>
+                <div class="kitchen-status-tile" onclick="navigate('kitchen')">
+                  <span class="kitchen-status-tile-title"><span class="ops-dot blue"></span> Preparing</span>
+                  <span class="kitchen-status-tile-count">${kPrep}</span>
+                </div>
+                <div class="kitchen-status-tile" onclick="navigate('kitchen')">
+                  <span class="kitchen-status-tile-title"><span class="ops-dot green"></span> Ready</span>
+                  <span class="kitchen-status-tile-count">${kReady}</span>
+                </div>
+                <div class="kitchen-status-tile" onclick="navigate('kitchen')">
+                  <span class="kitchen-status-tile-title"><span class="ops-dot red"></span> Delayed</span>
+                  <span class="kitchen-status-tile-count" style="color:var(--color-error)">${kDelayed}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Occupancy by Floor -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" style="display:flex;align-items:center;gap:var(--space-1-5)">
+                ${icon('grid', 16)} Floor Breakdown
+              </h3>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('tables')">Tables →</button>
+            </div>
+            <div class="card-body">
+              <div class="floor-occupancy-list">
+                ${floorStats.map(f => `
+                  <div class="floor-occupancy-item">
+                    <div class="floor-occupancy-header">
+                      <span class="floor-name">${f.floor} Floor</span>
+                      <span class="floor-stat">${f.occupied} / ${f.total} occupied (${f.pct}%)</span>
+                    </div>
+                    <div class="floor-bar-track">
+                      <div class="floor-bar-fill" style="width:${f.pct}%"></div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   `;
+
+  // Bind Dashboard Events
+  document.getElementById('dashRefreshBtn')?.addEventListener('click', () => {
+    showToast('Dashboard metrics refreshed', 'success');
+    renderDashboard(container);
+  });
+
+  document.getElementById('dashOrderSearch')?.addEventListener('input', debounce((e) => {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('#dashOrdersTbody tr').forEach(row => {
+      row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }, 150));
 
   // Initialize charts
   initDashboardCharts();
@@ -689,12 +1049,12 @@ function initDashboardCharts() {
   if (typeof Chart === 'undefined') return;
 
   const chartColors = {
-    primary: '#6366F1',
-    primaryLight: '#818CF8',
-    info: '#0EA5E9',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    grid: 'rgba(15, 23, 42, 0.06)'
+    primary: '#15803D',
+    primaryLight: '#22C55E',
+    info: '#0284C7',
+    warning: '#D97706',
+    error: '#DC2626',
+    grid: 'rgba(15, 23, 42, 0.05)'
   };
 
   // Revenue Chart
@@ -708,17 +1068,24 @@ function initDashboardCharts() {
           label: 'Revenue (₹)',
           data: revenueChartData.revenue,
           borderColor: chartColors.primary,
-          backgroundColor: 'rgba(99, 102, 241, 0.10)',
+          backgroundColor: 'rgba(21, 128, 61, 0.08)',
           fill: true,
-          tension: 0.4,
-          pointRadius: 4,
+          tension: 0.35,
+          pointRadius: 3,
           pointBackgroundColor: chartColors.primary
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Revenue: ${formatINR(ctx.raw)}`
+            }
+          }
+        },
         scales: {
           y: { beginAtZero: true, grid: { color: chartColors.grid }, ticks: { callback: v => formatINRShort(v) } },
           x: { grid: { display: false } }
@@ -727,165 +1094,261 @@ function initDashboardCharts() {
     });
   }
 
-  // Order type doughnut
-  const otCtx = document.getElementById('orderTypeChart')?.getContext('2d');
-  if (otCtx) {
-    chartInstances.orderType = new Chart(otCtx, {
-      type: 'doughnut',
-      data: {
-        labels: orderTypeData.labels,
-        datasets: [{
-          data: orderTypeData.values,
-          backgroundColor: [chartColors.primary, chartColors.info, chartColors.warning],
-          borderWidth: 0,
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        plugins: { legend: { position: 'bottom', labels: { padding: 16 } } }
-      }
-    });
-  }
+  // Dashboard events
+  document.getElementById('dashRefreshBtn')?.addEventListener('click', () => {
+    renderDashboard(container);
+    showToast('Dashboard metrics refreshed', 'info');
+  });
 
-  // Popular items horizontal bar
-  const piCtx = document.getElementById('popularItemsChart')?.getContext('2d');
-  if (piCtx) {
-    chartInstances.popular = new Chart(piCtx, {
-      type: 'bar',
-      data: {
-        labels: popularItemsData.map(i => i.name),
-        datasets: [{
-          label: 'Orders',
-          data: popularItemsData.map(i => i.orders),
-          backgroundColor: chartColors.primaryLight,
-          borderRadius: 4,
-          barThickness: 20
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { beginAtZero: true, grid: { color: chartColors.grid } },
-          y: { grid: { display: false } }
-        }
-      }
-    });
-  }
+  document.getElementById('dashDateRange')?.addEventListener('change', (e) => {
+    showToast(`Date filter updated: ${e.target.options[e.target.selectedIndex].text}`, 'info');
+    renderDashboard(container);
+  });
 }
 
 // ==========================================
-// PAGE: POS
+// PAGE: Order Entry (POS)
 // ==========================================
 function renderPOS(container) {
-  const { state } = store;
+  const state = store.state;
   const cart = state.cart;
   const activeCategory = window._posCategory || 'all';
+  const activeDiet = window._posDietFilter || 'all';
+  const searchQuery = (window._posSearchQuery || '').toLowerCase().trim();
 
-  const filteredItems = activeCategory === 'all'
+  let filteredItems = activeCategory === 'all'
     ? state.menuItems.filter(i => i.available)
     : state.menuItems.filter(i => i.category === activeCategory && i.available);
 
+  // Apply dietary filter
+  if (activeDiet === 'veg') {
+    filteredItems = filteredItems.filter(i => i.isVeg || ['Salads', 'Desserts', 'Beverages'].includes(i.category));
+  } else if (activeDiet === 'nonveg') {
+    filteredItems = filteredItems.filter(i => !i.isVeg && !['Desserts', 'Beverages'].includes(i.category));
+  } else if (activeDiet === 'popular') {
+    filteredItems = filteredItems.filter(i => i.rating >= 4.7 || i.ordersCount > 50);
+  }
+
+  if (searchQuery) {
+    filteredItems = filteredItems.filter(i => 
+      i.name.toLowerCase().includes(searchQuery) || 
+      i.category.toLowerCase().includes(searchQuery)
+    );
+  }
+
   const calc = calculateOrder(cart.items, cart.discount);
+  const totalCartQty = cart.items.reduce((sum, i) => sum + i.quantity, 0);
+  const totalAvailableCount = state.menuItems.filter(i => i.available).length;
+
+  const selectedCustomer = cart.customerId ? state.customers.find(c => c.id === cart.customerId) : null;
+  const selectedTable = cart.tableId ? state.tables.find(t => t.id === cart.tableId) : null;
 
   container.innerHTML = `
     <div class="pos-layout">
+      <!-- 1. Category Sidebar Rail (Left) -->
       <div class="pos-categories">
-        ${CATEGORIES.map(c => `
-          <div class="pos-category-item ${activeCategory === c.id ? 'active' : ''}" data-category="${c.id}">
-            <span>${c.emoji}</span>
-            <span>${c.name}</span>
-          </div>
-        `).join('')}
+        <div class="pos-categories-header">
+          <span class="pos-categories-title">CATEGORIES</span>
+          <span class="pos-categories-total-count">${totalAvailableCount}</span>
+        </div>
+        <div class="pos-categories-list">
+          ${CATEGORIES.map(c => {
+            const count = c.id === 'all' 
+              ? totalAvailableCount
+              : state.menuItems.filter(i => i.category === c.id && i.available).length;
+            const isActive = activeCategory === c.id;
+            return `
+              <div class="pos-category-item ${isActive ? 'active' : ''}" data-category="${c.id}">
+                <span class="pos-category-emoji-box">${c.emoji}</span>
+                <span class="pos-category-name">${c.name}</span>
+                <span class="pos-category-count">${count}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
       </div>
 
+      <!-- 2. Menu Items Canvas (Center - Flex Expanding) -->
       <div class="pos-products">
-        <div class="pos-toolbar">
-          <div class="pos-search">
-            ${icon('search', 18)}
-            <input type="text" placeholder="Search products..." id="posSearchInput" autocomplete="off">
-          </div>
-          <button class="btn btn-secondary btn-sm">${icon('filter', 16)} Filter</button>
-        </div>
-        <div class="pos-product-grid" id="posProductGrid">
-          ${filteredItems.map(item => `
-            <div class="pos-product-card" data-product-id="${item.id}">
-              <div class="pos-product-image">${item.emoji}</div>
-              <div class="pos-product-name">${escapeHtml(item.name)}</div>
-              <div class="pos-product-price">${formatINR(item.price)}</div>
+        <!-- Integrated Menu Workspace Toolbar -->
+        <div class="pos-menu-toolbar">
+          <div class="pos-menu-toolbar-top">
+            <div class="pos-menu-search-wrap">
+              ${icon('search', 15)}
+              <input type="text" placeholder="Search menu items (e.g. Pizza, Biryani, Coffee)..." id="posSearchInput" value="${escapeHtml(window._posSearchQuery || '')}" autocomplete="off">
+              ${window._posSearchQuery ? `<button class="pos-search-clear" id="posClearSearchBtn" title="Clear search">✕</button>` : ''}
             </div>
-          `).join('')}
-          ${filteredItems.length === 0 ? '<div class="empty-state"><div class="empty-state-text">No items in this category</div></div>' : ''}
+            <div class="pos-results-counter">
+              Showing <strong>${filteredItems.length}</strong> items
+            </div>
+          </div>
+
+          <!-- Quick Dietary Filter Chips -->
+          <div class="pos-diet-bar">
+            <button class="pos-diet-chip ${activeDiet === 'all' ? 'active' : ''}" data-diet="all">All Dishes</button>
+            <button class="pos-diet-chip ${activeDiet === 'veg' ? 'active' : ''}" data-diet="veg">
+              <span class="pos-diet-dot veg"></span> Pure Veg
+            </button>
+            <button class="pos-diet-chip ${activeDiet === 'nonveg' ? 'active' : ''}" data-diet="nonveg">
+              <span class="pos-diet-dot nonveg"></span> Non-Veg
+            </button>
+            <button class="pos-diet-chip ${activeDiet === 'popular' ? 'active' : ''}" data-diet="popular">
+              ⭐ Chef's Specials
+            </button>
+          </div>
+        </div>
+
+        <!-- Responsive Product Cards Grid -->
+        <div class="pos-product-grid" id="posProductGrid">
+          ${filteredItems.map(item => {
+            const inCart = cart.items.find(i => i.id === item.id);
+            const isVeg = item.isVeg || ['Salads', 'Desserts', 'Beverages'].includes(item.category);
+
+            return `
+              <div class="pos-product-card ${inCart ? 'in-ticket' : ''}" data-product-id="${item.id}">
+                ${inCart ? `<span class="pos-cart-qty-badge">✓ ${inCart.quantity} in ticket</span>` : ''}
+                
+                <div class="pos-product-image">
+                  <span class="pos-diet-badge ${isVeg ? 'veg' : 'nonveg'}">
+                    <span class="pos-diet-dot ${isVeg ? 'veg' : 'nonveg'}"></span>
+                    ${isVeg ? 'Veg' : 'Non-Veg'}
+                  </span>
+                  <img src="${item.image}" alt="${escapeHtml(item.name)}" class="pos-product-img" loading="lazy">
+                </div>
+
+                <div class="pos-product-info">
+                  <div class="pos-product-category-tag">${escapeHtml(item.category)}</div>
+                  <div class="pos-product-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                </div>
+
+                <div class="pos-product-bottom">
+                  <div class="pos-product-price-wrap">
+                    <span class="pos-product-price">${formatINR(item.price)}</span>
+                  </div>
+                  <button class="pos-product-add-btn ${inCart ? 'active' : ''}" aria-label="Add item">
+                    +
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+
+          ${filteredItems.length === 0 ? `
+            <div class="empty-state" style="grid-column:1/-1;padding:var(--space-12)">
+              <div class="empty-state-icon">${icon('coffee', 32)}</div>
+              <div class="empty-state-title">No menu items found</div>
+              <div class="empty-state-text">No dishes match your active category, dietary filter, or search keywords.</div>
+              <button class="btn btn-secondary btn-sm" id="posResetFilterBtn" style="margin-top:var(--space-3)">${icon('refreshCw', 14)} Reset All Filters</button>
+            </div>
+          ` : ''}
         </div>
       </div>
 
+      <!-- 3. Active Order Ticket Panel (Right - Sticky Workflow) -->
       <div class="pos-order-panel">
+        <!-- Sticky Ticket Header & Session Controls -->
         <div class="pos-order-header">
+          <div class="pos-ticket-title-row">
+            <div class="pos-ticket-title">
+              ${icon('shoppingCart', 16)}
+              <span>Active Ticket</span>
+            </div>
+            ${cart.items.length > 0 ? `
+              <button class="btn btn-ghost btn-sm pos-clear-ticket-btn" id="posClearCartBtn" title="Clear all items">
+                ${icon('trash2', 13)} Clear
+              </button>
+            ` : ''}
+          </div>
+
+          <!-- Order Type Segmented Tabs -->
           <div class="pos-order-type-tabs">
-            ${['Dine In', 'Takeaway', 'Delivery'].map(t => `
-              <div class="pos-order-type-tab ${cart.orderType === t ? 'active' : ''}" data-order-type="${t}">${t}</div>
+            ${[
+              { id: 'Dine In', label: 'Dine In' },
+              { id: 'Takeaway', label: 'Takeaway' },
+              { id: 'Delivery', label: 'Delivery' }
+            ].map(t => `
+              <div class="pos-order-type-tab ${cart.orderType === t.id ? 'active' : ''}" data-order-type="${t.id}">
+                ${t.label}
+              </div>
             `).join('')}
           </div>
+
+          <!-- Customer & Table Quick Selectors -->
           <div class="pos-order-selectors">
-            <div class="pos-order-selector" id="selectCustomer">
-              ${icon('user', 16)}
-              <span>${cart.customerId ? (state.customers.find(c => c.id === cart.customerId)?.name || 'Customer') : 'Select Customer'}</span>
+            <div class="pos-order-selector ${selectedCustomer ? 'has-value' : ''}" id="selectCustomer">
+              <span class="pos-sel-icon">${icon('user', 13)}</span>
+              <div class="pos-sel-info">
+                <span class="pos-sel-label">Customer</span>
+                <span class="pos-sel-val">${selectedCustomer ? escapeHtml(selectedCustomer.name) : 'Walk-in Guest'}</span>
+              </div>
+              <span class="pos-sel-arrow">▾</span>
             </div>
-            <div class="pos-order-selector" id="selectTable">
-              ${icon('grid', 16)}
-              <span>${cart.tableId ? (state.tables.find(t => t.id === cart.tableId)?.number || 'Table') : 'Select Table'}</span>
+
+            <div class="pos-order-selector ${selectedTable ? 'has-value' : ''}" id="selectTable">
+              <span class="pos-sel-icon">${icon('grid', 13)}</span>
+              <div class="pos-sel-info">
+                <span class="pos-sel-label">Table</span>
+                <span class="pos-sel-val">${selectedTable ? `Table ${selectedTable.number}` : 'Select Table'}</span>
+              </div>
+              <span class="pos-sel-arrow">▾</span>
             </div>
           </div>
         </div>
 
+        <!-- Scrollable Ticket Items List -->
         <div class="pos-order-items" id="posOrderItems">
           ${cart.items.length === 0 ? `
-            <div class="empty-state" style="padding:var(--space-8)">
-              <div class="empty-state-icon">${icon('shoppingCart', 24)}</div>
-              <div class="empty-state-title">No items yet</div>
-              <div class="empty-state-text">Click on products to add them to the order</div>
+            <div class="pos-empty-cart">
+              <div class="pos-empty-cart-icon">🛒</div>
+              <div class="pos-empty-cart-title">Ticket is Empty</div>
+              <div class="pos-empty-cart-desc">Add dishes from the menu to start building this order.</div>
             </div>
           ` : cart.items.map(item => `
             <div class="pos-order-item">
-              <div class="pos-order-item-info">
-                <div class="pos-order-item-name">${escapeHtml(item.name)}</div>
-                <div class="pos-order-item-price">${formatINR(item.price)}</div>
+              <div class="pos-order-item-main">
+                <div class="pos-order-item-title">${escapeHtml(item.name)}</div>
+                <div class="pos-order-item-unit">${formatINR(item.price)} each</div>
               </div>
+
               <div class="pos-qty-control">
-                <button class="pos-qty-btn" data-qty-action="dec" data-item-id="${item.id}">−</button>
+                <button class="pos-qty-btn" data-qty-action="dec" data-item-id="${item.id}" title="Decrease">−</button>
                 <span class="pos-qty-value">${item.quantity}</span>
-                <button class="pos-qty-btn" data-qty-action="inc" data-item-id="${item.id}">+</button>
+                <button class="pos-qty-btn" data-qty-action="inc" data-item-id="${item.id}" title="Increase">+</button>
               </div>
+
               <div class="pos-order-item-total">${formatINR(item.price * item.quantity)}</div>
-              <button class="pos-remove-btn" data-remove-id="${item.id}" aria-label="Remove item">${icon('x', 14)}</button>
+              <button class="pos-remove-btn" data-remove-id="${item.id}" aria-label="Remove item" title="Remove">${icon('x', 13)}</button>
             </div>
           `).join('')}
         </div>
 
+        <!-- Sticky Summary & Payment CTA -->
         <div class="pos-order-summary">
           <div class="pos-summary-row">
-            <span>Subtotal</span>
-            <span>${formatINR(calc.subtotal)}</span>
+            <span>Subtotal (${totalCartQty} items)</span>
+            <span class="pos-sum-val">${formatINR(calc.subtotal)}</span>
           </div>
+
           <div class="pos-summary-row">
             <span>Discount</span>
-            <input class="discount-input" type="number" min="0" value="${cart.discount}" id="posDiscount" placeholder="0">
+            <div class="pos-discount-wrap">
+              <span class="pos-discount-currency">₹</span>
+              <input class="pos-discount-input" type="number" min="0" value="${cart.discount || ''}" id="posDiscount" placeholder="0">
+            </div>
           </div>
+
           <div class="pos-summary-row">
-            <span>Tax (5% GST)</span>
-            <span>${formatINR(calc.tax)}</span>
+            <span>GST (5%)</span>
+            <span class="pos-sum-val">${formatINR(calc.tax)}</span>
           </div>
+
           <div class="pos-summary-row total">
-            <span>Grand Total</span>
-            <span>${formatINR(calc.grandTotal)}</span>
+            <span class="pos-total-label">Grand Total</span>
+            <span class="pos-total-val" id="posGrandTotalDisplay">${formatINR(calc.grandTotal)}</span>
           </div>
+
           <button class="pos-pay-btn" id="posProceedPayBtn" ${cart.items.length === 0 ? 'disabled' : ''}>
-            Proceed to Payment — ${formatINR(calc.grandTotal)}
+            ${icon('creditCard', 16)} Pay Now · ${formatINR(calc.grandTotal)}
           </button>
         </div>
       </div>
@@ -904,6 +1367,14 @@ function bindPOSEvents() {
     });
   });
 
+  // Dietary filter selection
+  document.querySelectorAll('[data-diet]').forEach(el => {
+    el.addEventListener('click', () => {
+      window._posDietFilter = el.dataset.diet;
+      renderPOS(document.getElementById('pageContent'));
+    });
+  });
+
   // Add product to cart
   document.querySelectorAll('[data-product-id]').forEach(el => {
     el.addEventListener('click', () => {
@@ -917,7 +1388,8 @@ function bindPOSEvents() {
 
   // Quantity controls
   document.querySelectorAll('[data-qty-action]').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
       const itemId = el.dataset.itemId;
       const item = store.state.cart.items.find(i => i.id === itemId);
       if (!item) return;
@@ -932,10 +1404,17 @@ function bindPOSEvents() {
 
   // Remove item
   document.querySelectorAll('[data-remove-id]').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
       store.removeFromCart(el.dataset.removeId);
       renderPOS(document.getElementById('pageContent'));
     });
+  });
+
+  // Clear Cart
+  document.getElementById('posClearCartBtn')?.addEventListener('click', () => {
+    store.clearCart();
+    renderPOS(document.getElementById('pageContent'));
   });
 
   // Order type
@@ -949,11 +1428,13 @@ function bindPOSEvents() {
   // Discount
   document.getElementById('posDiscount')?.addEventListener('input', (e) => {
     store.setCartDiscount(e.target.value);
-    // Update just the totals without full re-render
     const calc = calculateOrder(store.state.cart.items, store.state.cart.discount);
-    document.querySelector('.pos-summary-row:nth-child(3) span:last-child').textContent = formatINR(calc.tax);
-    document.querySelector('.pos-summary-row.total span:last-child').textContent = formatINR(calc.grandTotal);
-    document.getElementById('posProceedPayBtn').textContent = `Proceed to Payment — ${formatINR(calc.grandTotal)}`;
+    const taxEl = document.querySelector('.pos-summary-row:nth-child(3) .pos-sum-val');
+    if (taxEl) taxEl.textContent = formatINR(calc.tax);
+    const totalEl = document.getElementById('posGrandTotalDisplay');
+    if (totalEl) totalEl.textContent = formatINR(calc.grandTotal);
+    const payBtn = document.getElementById('posProceedPayBtn');
+    if (payBtn) payBtn.innerHTML = `${icon('creditCard', 16)} Proceed to Payment · ${formatINR(calc.grandTotal)}`;
   });
 
   // Select customer
@@ -971,19 +1452,30 @@ function bindPOSEvents() {
     if (store.state.cart.items.length === 0) return;
     const order = store.createOrderFromCart();
     if (order) {
-      showToast(`Order ${order.id} created successfully!`, 'success');
+      showToast(`Order ${order.id} ticket created!`, 'success');
       navigate('billing');
     }
   });
 
   // Search
   document.getElementById('posSearchInput')?.addEventListener('input', debounce((e) => {
-    const q = e.target.value.toLowerCase();
-    document.querySelectorAll('.pos-product-card').forEach(card => {
-      const name = card.querySelector('.pos-product-name')?.textContent.toLowerCase();
-      card.style.display = !q || name?.includes(q) ? '' : 'none';
-    });
-  }, 200));
+    window._posSearchQuery = e.target.value;
+    renderPOS(document.getElementById('pageContent'));
+  }, 180));
+
+  // Clear Search
+  document.getElementById('posClearSearchBtn')?.addEventListener('click', () => {
+    window._posSearchQuery = '';
+    renderPOS(document.getElementById('pageContent'));
+  });
+
+  // Reset Filters
+  document.getElementById('posResetFilterBtn')?.addEventListener('click', () => {
+    window._posCategory = 'all';
+    window._posDietFilter = 'all';
+    window._posSearchQuery = '';
+    renderPOS(document.getElementById('pageContent'));
+  });
 }
 
 function showCustomerSelector() {
@@ -1038,156 +1530,609 @@ function showTableSelector() {
 }
 
 // ==========================================
-// PAGE: Tables
+// PAGE: Tables (Table Management Command Center)
 // ==========================================
 function renderTables(container) {
-  const { tables } = store.state;
+  const { tables, orders } = store.state;
   const floors = ['All', 'Ground', 'First', 'Terrace'];
   const currentFloor = window._tableFloor || 'All';
-  const filtered = currentFloor === 'All' ? tables : tables.filter(t => t.floor === currentFloor);
+  const currentStatus = window._tableStatusFilter || 'All';
+  const currentSearch = (window._tableSearchQuery || '').toLowerCase();
+  const currentSort = window._tableSortOption || 'number';
+
+  // Filter tables
+  let filtered = tables.filter(t => {
+    if (currentFloor !== 'All' && t.floor !== currentFloor) return false;
+    if (currentStatus !== 'All' && t.status !== currentStatus) return false;
+    if (currentSearch) {
+      const matchNum = t.number.toLowerCase().includes(currentSearch);
+      const matchFloor = t.floor.toLowerCase().includes(currentSearch);
+      const order = t.currentOrderId ? orders.find(o => o.id === t.currentOrderId) : null;
+      const matchOrder = order && order.id.toLowerCase().includes(currentSearch);
+      if (!matchNum && !matchFloor && !matchOrder) return false;
+    }
+    return true;
+  });
+
+  // Sort tables
+  filtered.sort((a, b) => {
+    if (currentSort === 'number') {
+      const numA = parseInt(a.number.replace(/\D/g, '')) || 0;
+      const numB = parseInt(b.number.replace(/\D/g, '')) || 0;
+      return numA - numB;
+    }
+    if (currentSort === 'status') return a.status.localeCompare(b.status);
+    if (currentSort === 'capacity') return b.capacity - a.capacity;
+    if (currentSort === 'value') {
+      const ordA = a.currentOrderId ? orders.find(o => o.id === a.currentOrderId) : null;
+      const ordB = b.currentOrderId ? orders.find(o => o.id === b.currentOrderId) : null;
+      return (ordB ? ordB.total : 0) - (ordA ? ordA.total : 0);
+    }
+    return 0;
+  });
+
+  // Count summaries
+  const totalCount = tables.length;
+  const availCount = tables.filter(t => t.status === 'Available').length;
+  const occCount = tables.filter(t => t.status === 'Occupied').length;
+  const resCount = tables.filter(t => t.status === 'Reserved').length;
+  const cleanCount = tables.filter(t => t.status === 'Cleaning').length;
 
   container.innerHTML = `
-    <div class="page-header">
-      <h2 class="page-title">Table Management</h2>
-      <div class="page-actions">
-        <div class="tabs-pill">
-          ${floors.map(f => `<span class="tab-pill ${currentFloor === f ? 'active' : ''}" data-floor="${f}">${f}</span>`).join('')}
+    <div class="tables-page">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-content">
+          <h2 class="page-header-title">Table Management</h2>
+          <p class="page-header-desc">Monitor table occupancy, dining sessions, and seat availability in real-time.</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary btn-sm" id="newReservationBtn">${icon('calendar', 14)} New Reservation</button>
+          <button class="btn btn-primary btn-sm" id="openTableBtn">${icon('plus', 14)} Open Table</button>
         </div>
       </div>
-    </div>
-    <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-4)">
-      <span class="badge badge-success badge-dot">Available (${tables.filter(t=>t.status==='Available').length})</span>
-      <span class="badge badge-warning badge-dot">Occupied (${tables.filter(t=>t.status==='Occupied').length})</span>
-      <span class="badge badge-info badge-dot">Reserved (${tables.filter(t=>t.status==='Reserved').length})</span>
-    </div>
-    <div class="tables-grid">
-      ${filtered.map(t => {
-        const order = t.currentOrderId ? store.state.orders.find(o => o.id === t.currentOrderId) : null;
-        return `
-          <div class="table-card ${t.status.toLowerCase()}" data-table-detail="${t.id}">
-            <div class="table-card-number">${t.number}</div>
-            <div class="table-card-capacity">${t.capacity} seats · ${t.floor}</div>
-            <div class="table-card-status">${t.status}</div>
-            ${order ? `
-              <div class="table-card-order">
-                <div class="table-card-order-amount">${formatINR(order.total)}</div>
-                <div class="table-card-order-time">${icon('clock', 12)} ${elapsedTime(t.occupiedSince)}</div>
-              </div>
-            ` : ''}
+
+      <!-- Operational Toolbar -->
+      <div class="tables-toolbar">
+        <div class="tables-toolbar-top">
+          <div class="tables-toolbar-left-group">
+            <!-- Search -->
+            <div class="tables-search-wrap">
+              ${icon('search', 14)}
+              <input type="text" placeholder="Search table #, floor, order..." id="tablesSearchInput" value="${escapeHtml(window._tableSearchQuery || '')}">
+            </div>
+
+            <!-- Floor Segmented Tabs -->
+            <div class="tabs-pill">
+              ${floors.map(f => `<span class="tab-pill ${currentFloor === f ? 'active' : ''}" data-table-floor="${f}">${f}</span>`).join('')}
+            </div>
           </div>
-        `;
-      }).join('')}
+
+          <div class="tables-toolbar-right">
+            <select class="form-select form-select-sm" id="tablesSortSelect" style="height:36px;font-size:var(--font-size-xs);min-width:140px">
+              <option value="number" ${currentSort === 'number' ? 'selected' : ''}>Sort by Table #</option>
+              <option value="status" ${currentSort === 'status' ? 'selected' : ''}>Sort by Status</option>
+              <option value="capacity" ${currentSort === 'capacity' ? 'selected' : ''}>Sort by Capacity</option>
+              <option value="value" ${currentSort === 'value' ? 'selected' : ''}>Sort by Order Value</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="tables-toolbar-bottom">
+          <!-- Status Filter Chips -->
+          <div class="tables-status-filters">
+            <span class="status-filter-chip ${currentStatus === 'All' ? 'active' : ''}" data-status-filter="All">All (${totalCount})</span>
+            <span class="status-filter-chip ${currentStatus === 'Available' ? 'active' : ''}" data-status-filter="Available"><span class="ops-dot green"></span> Available (${availCount})</span>
+            <span class="status-filter-chip ${currentStatus === 'Occupied' ? 'active' : ''}" data-status-filter="Occupied"><span class="ops-dot amber"></span> Occupied (${occCount})</span>
+            <span class="status-filter-chip ${currentStatus === 'Reserved' ? 'active' : ''}" data-status-filter="Reserved"><span class="ops-dot blue"></span> Reserved (${resCount})</span>
+            <span class="status-filter-chip ${currentStatus === 'Cleaning' ? 'active' : ''}" data-status-filter="Cleaning"><span class="ops-dot gray"></span> Cleaning (${cleanCount})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dense Operational Table Grid -->
+      <div class="tables-grid-dense">
+        ${filtered.map(t => {
+          const order = t.currentOrderId ? orders.find(o => o.id === t.currentOrderId) : null;
+          const statusLower = t.status.toLowerCase();
+
+          return `
+            <div class="table-tile" data-open-table-drawer="${t.id}">
+              <div class="table-tile-top">
+                <div class="table-tile-num-wrap">
+                  <span class="table-tile-number">${t.number}</span>
+                  <span class="table-tile-seats">${t.capacity} seats</span>
+                </div>
+                <span class="table-tile-status-tag ${statusLower}">
+                  <span class="ops-dot ${statusLower === 'available' ? 'green' : statusLower === 'occupied' ? 'amber' : statusLower === 'reserved' ? 'blue' : 'gray'}" style="width:6px;height:6px"></span>
+                  ${t.status}
+                </span>
+              </div>
+
+              <div class="table-tile-body">
+                ${t.status === 'Occupied' && order ? `
+                  <div class="table-tile-row-main">
+                    <span class="table-tile-amount">${formatINR(order.total)}</span>
+                    <span class="table-tile-time">${icon('clock', 11)} ${elapsedTime(t.occupiedSince)}</span>
+                  </div>
+                  <div class="table-tile-row-sub">
+                    <span>${order.id}</span>
+                    <span>Waiter: Ravi</span>
+                  </div>
+                ` : t.status === 'Reserved' ? `
+                  <div class="table-tile-row-main">
+                    <span class="table-tile-res-guest">Aarav Sharma</span>
+                    <span class="table-tile-time">${icon('clock', 11)} 19:30</span>
+                  </div>
+                  <div class="table-tile-row-sub">
+                    <span>4 guests party</span>
+                    <span style="color:var(--color-info)">Reserved</span>
+                  </div>
+                ` : t.status === 'Cleaning' ? `
+                  <div class="table-tile-row-main">
+                    <span>Under Sanitization</span>
+                    <span class="table-tile-action-link">Ready soon</span>
+                  </div>
+                  <div class="table-tile-row-sub">
+                    <span>Staff resetting</span>
+                    <span>Cleaning</span>
+                  </div>
+                ` : `
+                  <div class="table-tile-row-main">
+                    <span>${t.floor} Floor</span>
+                    <span class="table-tile-action-link">Click to Open →</span>
+                  </div>
+                  <div class="table-tile-row-sub">
+                    <span>Ready for seating</span>
+                    <span>Available</span>
+                  </div>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      ${filtered.length === 0 ? renderEmptyState({
+        iconName: 'grid',
+        title: 'No tables match filters',
+        description: 'Try adjusting your search query, floor selection, or status filters.',
+        actionText: 'Reset Filters',
+        actionId: 'resetTableFiltersBtn'
+      }) : ''}
     </div>
   `;
 
-  document.querySelectorAll('[data-floor]').forEach(el => {
-    el.addEventListener('click', () => { window._tableFloor = el.dataset.floor; renderTables(container); });
+  // Bind Table Management Events
+  document.querySelectorAll('[data-table-floor]').forEach(el => {
+    el.addEventListener('click', () => {
+      window._tableFloor = el.dataset.tableFloor;
+      renderTables(container);
+    });
   });
 
-  document.querySelectorAll('[data-table-detail]').forEach(el => {
-    el.addEventListener('click', () => showTableDetail(el.dataset.tableDetail));
+  document.querySelectorAll('[data-status-filter]').forEach(el => {
+    el.addEventListener('click', () => {
+      window._tableStatusFilter = el.dataset.statusFilter;
+      renderTables(container);
+    });
+  });
+
+  document.getElementById('tablesSearchInput')?.addEventListener('input', debounce((e) => {
+    window._tableSearchQuery = e.target.value;
+    renderTables(container);
+  }, 150));
+
+  document.getElementById('tablesSortSelect')?.addEventListener('change', (e) => {
+    window._tableSortOption = e.target.value;
+    renderTables(container);
+  });
+
+  document.getElementById('resetTableFiltersBtn')?.addEventListener('click', () => {
+    window._tableFloor = 'All';
+    window._tableStatusFilter = 'All';
+    window._tableSearchQuery = '';
+    renderTables(container);
+  });
+
+  document.getElementById('openTableBtn')?.addEventListener('click', () => {
+    const avail = store.state.tables.find(t => t.status === 'Available');
+    if (avail) {
+      openTableDrawer(avail.id);
+    } else {
+      showToast('No available tables currently', 'warning');
+    }
+  });
+
+  document.getElementById('newReservationBtn')?.addEventListener('click', () => {
+    showModal('New Table Reservation', `
+      <form id="resForm">
+        <div class="form-group"><label class="form-label">Guest Name</label><input class="form-input" name="name" placeholder="Customer name" required></div>
+        <div class="form-group"><label class="form-label">Contact Phone</label><input class="form-input" name="phone" placeholder="+91 98765 43210" required></div>
+        <div class="form-group"><label class="form-label">Select Table</label>
+          <select class="form-select" name="tableId">
+            ${tables.filter(t => t.status === 'Available').map(t => `<option value="${t.id}">Table ${t.number} (${t.capacity} seats - ${t.floor})</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Reservation Time</label><input class="form-input" type="time" name="time" value="19:30" required></div>
+        <div class="form-group"><label class="form-label">Special Notes</label><textarea class="form-textarea" name="notes" placeholder="e.g. Window preference, anniversary dinner"></textarea></div>
+      </form>
+    `, () => {
+      const data = Object.fromEntries(new FormData(document.getElementById('resForm')));
+      if (data.tableId) {
+        store.updateTableStatus(data.tableId, 'Reserved');
+        showToast(`Table reserved for ${data.name || 'Guest'}`, 'success');
+        closeModal();
+        renderTables(container);
+      }
+    });
+  });
+
+  // Table Drawer Click
+  document.querySelectorAll('[data-open-table-drawer]').forEach(el => {
+    el.addEventListener('click', () => {
+      openTableDrawer(el.dataset.openTableDrawer);
+    });
   });
 }
 
-function showTableDetail(tableId) {
+function openTableDrawer(tableId) {
   const table = store.state.tables.find(t => t.id === tableId);
   if (!table) return;
   const order = table.currentOrderId ? store.state.orders.find(o => o.id === table.currentOrderId) : null;
+  const customer = order?.customerId ? store.state.customers.find(c => c.id === order.customerId) : null;
 
-  let content = `
-    <div style="margin-bottom:var(--space-5)">
-      <h3 style="margin-bottom:var(--space-2)">Table ${table.number}</h3>
-      <p>${table.capacity} seats · ${table.floor} Floor</p>
-      <span class="badge ${statusBadgeClass(table.status)} badge-dot">${table.status}</span>
+  const statusClass = table.status.toLowerCase();
+
+  let body = `
+    <!-- Session Summary -->
+    <div class="table-drawer-summary">
+      <div>
+        <div style="font-size:var(--font-size-lg);font-weight:var(--font-weight-bold);color:var(--color-text-primary)">Table ${table.number}</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">${table.capacity} Seats · ${table.floor} Floor</div>
+      </div>
+      <span class="table-tile-status-tag ${statusClass}">
+        <span class="ops-dot ${statusClass === 'available' ? 'green' : statusClass === 'occupied' ? 'amber' : statusClass === 'reserved' ? 'blue' : 'gray'}"></span>
+        ${table.status}
+      </span>
     </div>
   `;
 
-  if (order) {
-    content += `
-      <div class="card" style="margin-bottom:var(--space-4)">
-        <div class="card-body">
-          <h4 style="margin-bottom:var(--space-3)">Current Order: ${order.id}</h4>
-          ${order.items.map(i => `<div style="display:flex;justify-content:space-between;padding:var(--space-1) 0;font-size:var(--font-size-sm)"><span>${i.quantity}x ${i.name}</span><span>${formatINR(i.price * i.quantity)}</span></div>`).join('')}
-          <div style="border-top:1px solid var(--color-border);margin-top:var(--space-3);padding-top:var(--space-3);display:flex;justify-content:space-between;font-weight:var(--font-weight-bold)"><span>Total</span><span>${formatINR(order.total)}</span></div>
+  if (table.status === 'Occupied' && order) {
+    body += `
+      <div style="margin-bottom:var(--space-4)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+          <span style="font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);color:var(--color-text-primary)">Active Dining Session</span>
+          <span style="font-family:var(--dd-font-mono);font-size:var(--font-size-xs);color:var(--color-text-secondary)">${order.id}</span>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);background:var(--color-surface-hover);padding:var(--space-3);border-radius:var(--radius-md);font-size:var(--font-size-xs);color:var(--color-text-secondary)">
+          <div><strong>Guest:</strong> ${customer ? escapeHtml(customer.name) : 'Walk-in'}</div>
+          <div><strong>Started:</strong> ${formatTime(order.createdAt)} (${elapsedTime(table.occupiedSince)})</div>
+          <div><strong>Waiter:</strong> Ravi Shankar</div>
+          <div><strong>Status:</strong> ${order.status}</div>
+        </div>
+      </div>
+
+      <!-- Itemized List -->
+      <div style="font-size:var(--font-size-xs);font-weight:var(--font-weight-semibold);text-transform:uppercase;color:var(--color-text-secondary);letter-spacing:0.04em;margin-bottom:var(--space-2)">
+        Ordered Items (${order.items.reduce((s,i)=>s+i.quantity,0)})
+      </div>
+      <div class="table-drawer-order-list">
+        ${order.items.map(item => `
+          <div class="table-drawer-order-item">
+            <div>
+              <span style="font-weight:var(--font-weight-medium);color:var(--color-text-primary)">${item.quantity}x</span>
+              <span style="color:var(--color-text-primary)">${escapeHtml(item.name)}</span>
+            </div>
+            <span style="font-weight:var(--font-weight-semibold);font-family:var(--dd-font-mono)">${formatINR(item.price * item.quantity)}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Order Totals -->
+      <div class="table-drawer-totals">
+        <div class="table-drawer-totals-row"><span>Subtotal</span><span>${formatINR(order.subtotal)}</span></div>
+        <div class="table-drawer-totals-row"><span>Tax (5% GST)</span><span>${formatINR(order.tax)}</span></div>
+        ${order.discount > 0 ? `<div class="table-drawer-totals-row" style="color:var(--color-success)"><span>Discount</span><span>-${formatINR(order.discount)}</span></div>` : ''}
+        <div class="table-drawer-totals-row grand-total"><span>Total Bill</span><span>${formatINR(order.total)}</span></div>
+      </div>
+    `;
+  } else if (table.status === 'Reserved') {
+    body += `
+      <div style="background:var(--color-surface-hover);padding:var(--space-4);border-radius:var(--radius-md);margin-bottom:var(--space-4);font-size:var(--font-size-sm)">
+        <div style="font-weight:var(--font-weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-2)">Reservation Information</div>
+        <div style="color:var(--color-text-secondary);display:flex;flex-direction:column;gap:var(--space-1);font-size:var(--font-size-xs)">
+          <div><strong>Guest Name:</strong> Aarav Sharma</div>
+          <div><strong>Party Size:</strong> 4 Guests</div>
+          <div><strong>Time:</strong> 19:30 PM (Today)</div>
+          <div><strong>Phone:</strong> +91 98765 43210</div>
+          <div><strong>Notes:</strong> Window corner preference</div>
+        </div>
+      </div>
+    `;
+  } else if (table.status === 'Cleaning') {
+    body += `
+      <div style="background:var(--color-surface-hover);padding:var(--space-4);border-radius:var(--radius-md);margin-bottom:var(--space-4);font-size:var(--font-size-sm);text-align:center">
+        <div style="font-weight:var(--font-weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-1)">Table Undergoing Sanitization</div>
+        <p style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">Staff is cleaning and resetting Table ${table.number}. Mark as available when ready for guests.</p>
+      </div>
+    `;
+  } else {
+    body += `
+      <div style="background:var(--color-surface-hover);padding:var(--space-4);border-radius:var(--radius-md);margin-bottom:var(--space-4);font-size:var(--font-size-sm)">
+        <div style="font-weight:var(--font-weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-1)">Table Ready for Dining</div>
+        <p style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">Open this table to start a new dining session or place an order from Order Entry.</p>
       </div>
     `;
   }
 
-  content += `
-    <div style="display:flex;gap:var(--space-2);flex-wrap:wrap">
-      ${table.status === 'Available' ? `<button class="btn btn-primary btn-sm" onclick="store.updateTableStatus('${tableId}','Reserved');closeModal();renderTables(document.getElementById('pageContent'));showToast('Table reserved','success')">Reserve</button>` : ''}
-      ${table.status === 'Occupied' && order ? `<button class="btn btn-primary btn-sm" onclick="store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${order.id}');closeModal();navigate('billing')">Print Bill</button>` : ''}
-      ${table.status !== 'Available' ? `<button class="btn btn-secondary btn-sm" onclick="store.updateTableStatus('${tableId}','Available');closeModal();renderTables(document.getElementById('pageContent'));showToast('Table freed','success')">Free Table</button>` : ''}
-    </div>
-  `;
+  // Footer Actions
+  let footer = '<div class="table-drawer-actions" style="width:100%">';
 
-  showModal(`Table ${table.number}`, content);
+  if (table.status === 'Occupied' && order) {
+    footer += `
+      <button class="btn btn-secondary btn-sm" onclick="closeDrawer();store.state.cart.tableId='${table.id}';navigate('pos')">
+        ${icon('plus', 14)} Add Items
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="closeDrawer();store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${order.id}');navigate('billing')">
+        ${icon('receipt', 14)} Print Bill & Pay
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="showTransferTableModal('${table.id}')">
+        ${icon('arrowRight', 14)} Move Table
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="showMergeTableModal('${table.id}')">
+        ${icon('layers', 14)} Merge
+      </button>
+      <button class="btn btn-secondary btn-sm" style="grid-column:span 2" onclick="store.updateTableStatus('${table.id}','Cleaning');closeDrawer();renderTables(document.getElementById('pageContent'));showToast('Table ${table.number} set to Cleaning','info')">
+        Close Session & Mark Cleaning
+      </button>
+    `;
+  } else if (table.status === 'Available') {
+    footer += `
+      <button class="btn btn-primary btn-sm" style="grid-column:span 2" onclick="closeDrawer();store.state.cart.tableId='${table.id}';store.updateTableStatus('${table.id}','Occupied');navigate('pos');showToast('Table ${table.number} opened for new session','success')">
+        ${icon('plus', 14)} Open New Session
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="store.updateTableStatus('${table.id}','Reserved');closeDrawer();renderTables(document.getElementById('pageContent'));showToast('Table ${table.number} reserved','success')">
+        Reserve
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="store.updateTableStatus('${table.id}','Cleaning');closeDrawer();renderTables(document.getElementById('pageContent'));showToast('Table ${table.number} marked for cleaning','info')">
+        Clean
+      </button>
+    `;
+  } else if (table.status === 'Reserved') {
+    footer += `
+      <button class="btn btn-primary btn-sm" style="grid-column:span 2" onclick="closeDrawer();store.state.cart.tableId='${table.id}';store.updateTableStatus('${table.id}','Occupied');navigate('pos');showToast('Seated reservation at Table ${table.number}','success')">
+        Seat Guests & Open Order
+      </button>
+      <button class="btn btn-secondary btn-sm" style="grid-column:span 2" onclick="store.updateTableStatus('${table.id}','Available');closeDrawer();renderTables(document.getElementById('pageContent'));showToast('Reservation cancelled, table available','info')">
+        Cancel Reservation
+      </button>
+    `;
+  } else if (table.status === 'Cleaning') {
+    footer += `
+      <button class="btn btn-primary btn-sm" style="grid-column:span 2" onclick="store.updateTableStatus('${table.id}','Available');closeDrawer();renderTables(document.getElementById('pageContent'));showToast('Table ${table.number} is now Available','success')">
+        Mark Ready & Available
+      </button>
+    `;
+  }
+
+  footer += '</div>';
+
+  showDrawer(`Table Details · Table ${table.number}`, body, footer);
+}
+
+function showTransferTableModal(fromTableId) {
+  const fromTable = store.state.tables.find(t => t.id === fromTableId);
+  const availableTables = store.state.tables.filter(t => t.status === 'Available' && t.id !== fromTableId);
+
+  showModal('Transfer / Move Table', `
+    <div style="margin-bottom:var(--space-4)">
+      <p style="font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">
+        Move active order from <strong>Table ${fromTable?.number}</strong> to another available table:
+      </p>
+      <div class="form-group">
+        <label class="form-label">Select Target Table</label>
+        <select class="form-select" id="targetTableSelect">
+          ${availableTables.map(t => `<option value="${t.id}">Table ${t.number} (${t.capacity} seats · ${t.floor} Floor)</option>`).join('')}
+        </select>
+        ${availableTables.length === 0 ? '<div class="form-hint" style="color:var(--color-error)">No available tables to move to.</div>' : ''}
+      </div>
+    </div>
+  `, () => {
+    const targetTableId = document.getElementById('targetTableSelect')?.value;
+    if (!targetTableId) return;
+    const targetTable = store.state.tables.find(t => t.id === targetTableId);
+    
+    // Transfer order
+    targetTable.currentOrderId = fromTable.currentOrderId;
+    targetTable.occupiedSince = fromTable.occupiedSince;
+    targetTable.status = 'Occupied';
+
+    fromTable.currentOrderId = null;
+    fromTable.occupiedSince = null;
+    fromTable.status = 'Cleaning';
+
+    closeModal();
+    closeDrawer();
+    renderTables(document.getElementById('pageContent'));
+    showToast(`Order transferred from Table ${fromTable.number} → Table ${targetTable.number}`, 'success');
+  });
+}
+
+function showMergeTableModal(primaryTableId) {
+  const primaryTable = store.state.tables.find(t => t.id === primaryTableId);
+  const otherTables = store.state.tables.filter(t => t.id !== primaryTableId);
+
+  showModal('Merge Tables', `
+    <div style="margin-bottom:var(--space-4)">
+      <p style="font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">
+        Combine Table <strong>${primaryTable?.number}</strong> with another table for larger parties:
+      </p>
+      <div class="form-group">
+        <label class="form-label">Select Table to Merge With</label>
+        <select class="form-select" id="mergeTableSelect">
+          ${otherTables.map(t => `<option value="${t.id}">Table ${t.number} (${t.status} · ${t.capacity} seats)</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `, () => {
+    const mergeId = document.getElementById('mergeTableSelect')?.value;
+    const mergedTbl = store.state.tables.find(t => t.id === mergeId);
+    if (mergedTbl) {
+      mergedTbl.status = 'Occupied';
+      mergedTbl.currentOrderId = primaryTable.currentOrderId;
+      closeModal();
+      closeDrawer();
+      renderTables(document.getElementById('pageContent'));
+      showToast(`Merged Table ${primaryTable.number} with Table ${mergedTbl.number}`, 'success');
+    }
+  });
+}
+
+function showTableDetail(tableId) {
+  openTableDrawer(tableId);
 }
 
 // ==========================================
-// PAGE: Kitchen
+// PAGE: Kitchen Display System (KDS)
 // ==========================================
 function renderKitchen(container) {
   const orders = store.state.orders;
-  const pending = orders.filter(o => o.status === 'Pending');
-  const preparing = orders.filter(o => o.status === 'Preparing');
-  const ready = orders.filter(o => o.status === 'Ready');
+  const activeTab = window._kitchenTab || 'all';
+
+  // Compute live elapsed times & states
+  const pendingOrders = orders.filter(o => o.status === 'Pending');
+  const preparingOrders = orders.filter(o => o.status === 'Preparing');
+  const readyOrders = orders.filter(o => o.status === 'Ready');
+
+  const delayedOrders = orders.filter(o => {
+    if (o.status !== 'Pending' && o.status !== 'Preparing') return false;
+    const mins = Math.floor((Date.now() - new Date(o.createdAt).getTime()) / 60000);
+    return mins > 20;
+  });
 
   container.innerHTML = `
-    <div class="page-header">
-      <h2 class="page-title">Kitchen Display</h2>
-      <div class="page-actions">
-        <button class="btn btn-secondary btn-sm" onclick="renderKitchen(document.getElementById('pageContent'))">${icon('clock', 16)} Refresh</button>
+    <div class="kitchen-page">
+      <!-- KDS Header Bar -->
+      <div class="kitchen-header-card">
+        <div class="kitchen-header-left">
+          <div class="kitchen-header-title-wrap">
+            <h1 class="kitchen-header-title">Kitchen Display</h1>
+            <span class="badge badge-success badge-dot">Live Ticket Feed</span>
+          </div>
+          <p class="kitchen-header-subtitle">Real-time order preparation & station routing</p>
+        </div>
+
+        <div class="kitchen-header-right">
+          <!-- KDS Filter Tabs -->
+          <div class="tabs-pill">
+            <span class="tab-pill ${activeTab === 'all' ? 'active' : ''}" data-kitchen-tab="all">All (${orders.filter(o=>['Pending','Preparing','Ready'].includes(o.status)).length})</span>
+            <span class="tab-pill ${activeTab === 'Pending' ? 'active' : ''}" data-kitchen-tab="Pending">New (${pendingOrders.length})</span>
+            <span class="tab-pill ${activeTab === 'Preparing' ? 'active' : ''}" data-kitchen-tab="Preparing">Preparing (${preparingOrders.length})</span>
+            <span class="tab-pill ${activeTab === 'Ready' ? 'active' : ''}" data-kitchen-tab="Ready">Ready (${readyOrders.length})</span>
+            <span class="tab-pill ${activeTab === 'Delayed' ? 'active' : ''}" data-kitchen-tab="Delayed" style="color:var(--color-error)">Delayed (${delayedOrders.length})</span>
+          </div>
+
+          <button class="btn btn-secondary btn-sm" id="kdsRefreshBtn" title="Refresh Tickets">
+            ${icon('refreshCw', 13)} Refresh
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="kitchen-layout">
-      ${kitchenColumn('Pending', pending, 'warning')}
-      ${kitchenColumn('Preparing', preparing, 'info')}
-      ${kitchenColumn('Ready', ready, 'success')}
+
+      <!-- 4-Column Operational KDS Layout -->
+      <div class="kitchen-layout-4col">
+        ${(activeTab === 'all' || activeTab === 'Pending') ? kitchenKdsColumn('New Orders', pendingOrders, 'amber', 'Pending') : ''}
+        ${(activeTab === 'all' || activeTab === 'Preparing') ? kitchenKdsColumn('Preparing', preparingOrders, 'blue', 'Preparing') : ''}
+        ${(activeTab === 'all' || activeTab === 'Ready') ? kitchenKdsColumn('Ready for Service', readyOrders, 'green', 'Ready') : ''}
+        ${(activeTab === 'all' || activeTab === 'Delayed') ? kitchenKdsColumn('Delayed (>20m)', delayedOrders, 'red', 'Delayed') : ''}
+      </div>
     </div>
   `;
 
   bindKitchenEvents();
 }
 
-function kitchenColumn(title, orders, color) {
+function kitchenKdsColumn(title, orders, statusColor, columnType) {
   return `
-    <div class="kitchen-column">
+    <div class="kitchen-column ${columnType === 'Delayed' ? 'delayed-column' : ''}">
       <div class="kitchen-column-header">
-        <span class="kitchen-column-title">
-          <span class="badge badge-${color}" style="width:8px;height:8px;padding:0;border-radius:50%"></span>
-          ${title}
-        </span>
+        <div class="kitchen-column-title">
+          <span class="ops-dot ${statusColor}"></span>
+          <span>${title}</span>
+        </div>
         <span class="kitchen-column-count">${orders.length}</span>
       </div>
+
       <div class="kitchen-column-body">
-        ${orders.length === 0 ? '<div class="empty-state" style="padding:var(--space-6)"><div class="empty-state-text">No orders</div></div>' : ''}
+        ${orders.length === 0 ? `
+          <div class="empty-state glass" style="padding:var(--space-6);margin:var(--space-3) 0">
+            <div class="empty-state-icon" style="width:36px;height:36px;margin-bottom:var(--space-2)">${icon('checkCircle', 18)}</div>
+            <div class="empty-state-title" style="font-size:12.5px">No ${title.toLowerCase()}</div>
+            <div class="empty-state-text" style="font-size:11px;margin-bottom:0">Station is all caught up.</div>
+          </div>
+        ` : ''}
+
         ${orders.map(o => {
           const minsSinceCreate = Math.floor((Date.now() - new Date(o.createdAt).getTime()) / 60000);
-          const isUrgent = minsSinceCreate > 20;
+          const isDelayed = minsSinceCreate > 20;
           const customer = o.customerId ? store.state.customers.find(c => c.id === o.customerId) : null;
           const table = o.tableId ? store.state.tables.find(t => t.id === o.tableId) : null;
+          const totalQty = o.items ? o.items.reduce((s, i) => s + i.quantity, 0) : 0;
+
           return `
-            <div class="kitchen-order-card ${isUrgent ? 'urgent' : ''}">
-              <div class="kitchen-order-top">
-                <span class="kitchen-order-id">${o.id}</span>
-                <span class="kitchen-order-time ${isUrgent ? 'urgent' : ''}">${icon('clock', 12)} ${minsSinceCreate}m</span>
+            <div class="kitchen-ticket-card ${isDelayed ? 'urgent-ticket' : ''}" data-order-id="${o.id}">
+              <!-- Card Header -->
+              <div class="kitchen-ticket-top">
+                <div class="kitchen-ticket-id-wrap">
+                  <span class="kitchen-ticket-num">#${o.id}</span>
+                  ${table ? `<span class="kitchen-ticket-table-badge">Table ${table.number}</span>` : `<span class="badge badge-neutral">${o.orderType}</span>`}
+                </div>
+                <div class="kitchen-ticket-timer ${isDelayed ? 'timer-delayed' : ''}">
+                  ${icon('clock', 11)} ${minsSinceCreate}m ago
+                </div>
               </div>
-              <div class="kitchen-order-meta">
-                <span class="badge badge-neutral">${o.orderType}</span>
-                ${table ? `<span class="badge badge-info">${table.number}</span>` : ''}
-                ${customer ? `<span class="badge badge-neutral">${customer.name}</span>` : ''}
+
+              <!-- Card Sub-meta -->
+              <div class="kitchen-ticket-meta">
+                <span>${customer ? escapeHtml(customer.name) : 'Walk-in'}</span>
+                <span>${totalQty} items</span>
               </div>
-              <div class="kitchen-order-items">
-                ${o.items.map(i => `<div class="kitchen-order-item"><span><span class="kitchen-order-item-qty">${i.quantity}x</span> ${escapeHtml(i.name)}</span></div>`).join('')}
+
+              <!-- Itemized List with modifiers -->
+              <div class="kitchen-ticket-items">
+                ${o.items.map(item => `
+                  <div class="kitchen-ticket-item-row">
+                    <span class="kitchen-ticket-item-qty">${item.quantity}×</span>
+                    <span class="kitchen-ticket-item-name">${escapeHtml(item.name)}</span>
+                  </div>
+                `).join('')}
               </div>
-              ${o.notes ? `<div class="kitchen-order-notes">📝 ${escapeHtml(o.notes)}</div>` : ''}
-              <div class="kitchen-order-actions">
-                ${o.status === 'Pending' ? `<button class="btn btn-primary btn-sm" data-kitchen-action="Preparing" data-order-id="${o.id}">Start Preparing</button>` : ''}
-                ${o.status === 'Preparing' ? `<button class="btn btn-success btn-sm" data-kitchen-action="Ready" data-order-id="${o.id}">Mark Ready</button>` : ''}
-                ${o.status === 'Ready' ? `<button class="btn btn-primary btn-sm" data-kitchen-action="Completed" data-order-id="${o.id}">${icon('check', 14)} Complete</button>` : ''}
-                <button class="btn btn-ghost btn-sm" data-kitchen-action="Cancelled" data-order-id="${o.id}" style="color:var(--color-error)">Cancel</button>
+
+              ${o.notes ? `
+                <div class="kitchen-ticket-instruction">
+                  <span>📝 Instruction:</span> ${escapeHtml(o.notes)}
+                </div>
+              ` : ''}
+
+              <!-- Actions -->
+              <div class="kitchen-ticket-actions">
+                ${o.status === 'Pending' ? `
+                  <button class="btn btn-primary btn-sm kitchen-act-btn" data-kitchen-action="Preparing" data-order-id="${o.id}">
+                    Start Preparing
+                  </button>
+                ` : o.status === 'Preparing' ? `
+                  <button class="btn btn-success btn-sm kitchen-act-btn" data-kitchen-action="Ready" data-order-id="${o.id}">
+                    ${icon('check', 13)} Mark Ready
+                  </button>
+                ` : o.status === 'Ready' ? `
+                  <button class="btn btn-primary btn-sm kitchen-act-btn" data-kitchen-action="Completed" data-order-id="${o.id}">
+                    ${icon('checkCircle', 13)} Complete / Served
+                  </button>
+                ` : ''}
+
+                <button class="btn btn-ghost btn-sm" data-kitchen-detail="${o.id}" title="View Ticket Details">
+                  ${icon('eye', 13)}
+                </button>
               </div>
             </div>
           `;
@@ -1198,13 +2143,66 @@ function kitchenColumn(title, orders, color) {
 }
 
 function bindKitchenEvents() {
+  // Tab filtering
+  document.querySelectorAll('[data-kitchen-tab]').forEach(el => {
+    el.addEventListener('click', () => {
+      window._kitchenTab = el.dataset.kitchenTab;
+      renderKitchen(document.getElementById('pageContent'));
+    });
+  });
+
+  // Refresh
+  document.getElementById('kdsRefreshBtn')?.addEventListener('click', () => {
+    renderKitchen(document.getElementById('pageContent'));
+    showToast('Kitchen tickets refreshed', 'info');
+  });
+
+  // Action status transitions
   document.querySelectorAll('[data-kitchen-action]').forEach(el => {
     el.addEventListener('click', () => {
       const action = el.dataset.kitchenAction;
       const orderId = el.dataset.orderId;
       store.updateOrderStatus(orderId, action);
-      showToast(`Order ${orderId} → ${action}`, action === 'Cancelled' ? 'warning' : 'success');
+      showToast(`Ticket #${orderId} marked as ${action}`, 'success');
       renderKitchen(document.getElementById('pageContent'));
+    });
+  });
+
+  // Ticket Detail View
+  document.querySelectorAll('[data-kitchen-detail]').forEach(el => {
+    el.addEventListener('click', () => {
+      const orderId = el.dataset.kitchenDetail;
+      const order = store.state.orders.find(o => o.id === orderId);
+      if (!order) return;
+      const table = order.tableId ? store.state.tables.find(t => t.id === order.tableId) : null;
+      const customer = order.customerId ? store.state.customers.find(c => c.id === order.customerId) : null;
+
+      showModal(`Ticket #${order.id} · Details`, `
+        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);background:var(--color-surface-hover);padding:var(--space-3);border-radius:var(--radius-md);font-size:var(--font-size-xs)">
+            <div><strong>Session:</strong> ${order.orderType} ${table ? `(Table ${table.number})` : ''}</div>
+            <div><strong>Customer:</strong> ${customer ? escapeHtml(customer.name) : 'Walk-in'}</div>
+            <div><strong>Created:</strong> ${formatTime(order.createdAt)}</div>
+            <div><strong>Status:</strong> <span class="badge ${statusBadgeClass(order.status)}">${order.status}</span></div>
+          </div>
+
+          <div style="font-weight:600;font-size:var(--font-size-sm);margin-top:var(--space-2)">Items to Prepare</div>
+          <div style="border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden">
+            ${order.items.map(i => `
+              <div style="display:flex;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-border-light);font-size:var(--font-size-sm)">
+                <span><strong>${i.quantity}×</strong> ${escapeHtml(i.name)}</span>
+                <span style="font-family:var(--dd-font-mono)">${formatINR(i.price * i.quantity)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          ${order.notes ? `
+            <div style="padding:var(--space-2-5,10px);background:rgba(217, 119, 6, 0.08);border-left:3px solid var(--color-warning);border-radius:var(--radius-sm);font-size:var(--font-size-xs)">
+              <strong>Special Instructions:</strong> ${escapeHtml(order.notes)}
+            </div>
+          ` : ''}
+        </div>
+      `);
     });
   });
 }
@@ -1219,8 +2217,8 @@ function renderBilling(container) {
       <div class="empty-state">
         <div class="empty-state-icon">${icon('receipt', 28)}</div>
         <div class="empty-state-title">No order selected</div>
-        <div class="empty-state-text">Create an order from POS or select from Orders to bill</div>
-        <button class="btn btn-primary" onclick="navigate('pos')" style="margin-top:var(--space-4)">Go to POS</button>
+        <div class="empty-state-text">Create an order from Order Entry or select from Orders to bill</div>
+        <button class="btn btn-primary" onclick="navigate('pos')" style="margin-top:var(--space-4)">Go to Order Entry</button>
       </div>
     `;
     return;
@@ -1246,9 +2244,11 @@ function renderBilling(container) {
               <p style="font-size:var(--font-size-sm);margin:0">${formatDateTime(order.createdAt)}</p>
             </div>
             <div style="text-align:right">
-              ${customer ? `<div style="font-weight:var(--font-weight-semibold)">${escapeHtml(customer.name)}</div><div style="font-size:var(--font-size-sm);color:var(--color-text-tertiary)">${customer.phone}</div>` : ''}
-              ${table ? `<div class="badge badge-info" style="margin-top:var(--space-2)">Table ${table.number}</div>` : ''}
-              <div class="badge badge-neutral" style="margin-top:var(--space-1)">${order.orderType}</div>
+              ${customer ? `<div style="font-weight:600;font-size:14px;color:var(--dd-text)">${escapeHtml(customer.name)}</div><div style="font-size:12.5px;color:var(--dd-text-muted)">${customer.phone}</div>` : ''}
+              <div style="margin-top:6px;display:flex;justify-content:flex-end;gap:4px">
+                ${table ? `<span class="badge badge-loyalty">Table ${table.number}</span>` : ''}
+                <span class="badge badge-channel">${order.orderType}</span>
+              </div>
             </div>
           </div>
           <table class="billing-items-table">
@@ -1362,17 +2362,15 @@ function bindBillingEvents(order) {
     const btn = document.getElementById('completePaymentBtn');
     btn.innerHTML = '<div class="loading-spinner loading-spinner-sm" style="border-top-color:white"></div> Processing...';
     btn.disabled = true;
-
     setTimeout(() => {
       store.completePayment(order.id, selectedMethod);
       showToast(`Payment of ${formatINR(order.total)} received via ${selectedMethod}`, 'success');
       renderBilling(document.getElementById('pageContent'));
     }, selectedMethod === 'Cash' ? 500 : 1500);
-  });
 }
 
 // ==========================================
-// PAGE: Orders
+// PAGE: Orders (Screenshot 06 Specification)
 // ==========================================
 function renderOrders(container) {
   const orders = store.state.orders;
@@ -1380,51 +2378,72 @@ function renderOrders(container) {
   const filtered = statusFilter === 'All' ? orders : orders.filter(o => o.status === statusFilter || o.paymentStatus === statusFilter);
 
   container.innerHTML = `
-    <div class="page-header">
+    <div class="page-header" style="margin-bottom:16px">
       <h2 class="page-title">Orders</h2>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header">
-        <div class="data-table-search">${icon('search', 16)}<input type="text" placeholder="Search orders..." id="orderSearchInput"></div>
+      <div class="data-table-header" style="padding:16px 20px">
+        <div class="pill-search-wrap">
+          ${icon('search', 15)}
+          <input type="text" class="pill-search-input" placeholder="Search orders..." id="orderSearchInput">
+        </div>
         <div class="data-table-actions">
-          <select class="form-select" style="width:auto;height:36px;font-size:var(--font-size-sm)" id="orderStatusFilter">
-            <option ${statusFilter==='All'?'selected':''}>All</option>
+          <select class="form-select" style="width:auto;height:38px;font-size:13px;border-radius:8px;border-color:var(--dd-border-strong)" id="orderStatusFilter">
+            <option ${statusFilter==='All'?'selected':''}>All statuses</option>
             <option ${statusFilter==='Pending'?'selected':''}>Pending</option>
             <option ${statusFilter==='Preparing'?'selected':''}>Preparing</option>
             <option ${statusFilter==='Ready'?'selected':''}>Ready</option>
             <option ${statusFilter==='Completed'?'selected':''}>Completed</option>
-            <option ${statusFilter==='Cancelled'?'selected':''}>Cancelled</option>
+            <option ${statusFilter==='Unpaid'?'selected':''}>Unpaid</option>
+            <option ${statusFilter==='Paid'?'selected':''}>Paid</option>
           </select>
         </div>
       </div>
       <table class="data-table">
-        <thead><tr><th>Order ID</th><th>Customer</th><th>Type</th><th>Items</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>CUSTOMER</th>
+            <th>TYPE</th>
+            <th>ITEMS</th>
+            <th>AMOUNT</th>
+            <th>PAYMENT</th>
+            <th>STATUS</th>
+            <th>DATE</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
-          ${filtered.length === 0 ? '<tr><td colspan="9"><div class="empty-state" style="padding:var(--space-6)"><div class="empty-state-text">No orders found</div></div></td></tr>' : ''}
+          ${filtered.length === 0 ? `<tr><td colspan="9">${renderEmptyState({ iconName: 'clipboardList', title: 'No orders found', description: 'No orders match your active filter criteria.', actionText: 'Create Order', actionNav: 'pos' })}</td></tr>` : ''}
           ${filtered.map(o => {
             const customer = o.customerId ? store.state.customers.find(c => c.id === o.customerId) : null;
+            const payClass = o.paymentStatus === 'Paid' ? 'badge-order-paid' : 'badge-order-unpaid';
+            const statClass = o.status === 'Preparing' ? 'badge-order-preparing' : o.status === 'Pending' ? 'badge-order-pending' : o.status === 'Ready' ? 'badge-order-ready' : 'badge-order-completed';
+
             return `<tr>
-              <td style="font-weight:var(--font-weight-semibold)">${o.id}</td>
-              <td>${customer ? escapeHtml(customer.name) : '—'}</td>
-              <td><span class="badge badge-neutral">${o.orderType}</span></td>
-              <td>${o.itemCount}</td>
-              <td style="font-weight:var(--font-weight-semibold)">${formatINR(o.total)}</td>
-              <td><span class="badge ${statusBadgeClass(o.paymentStatus)}">${o.paymentStatus}</span></td>
-              <td><span class="badge ${statusBadgeClass(o.status)}">${o.status}</span></td>
-              <td style="font-size:var(--font-size-sm);color:var(--color-text-tertiary)">${formatDateTime(o.createdAt)}</td>
-              <td>
-                ${o.paymentStatus === 'Unpaid' ? `<button class="btn btn-primary btn-sm" onclick="store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${o.id}');navigate('billing')">Bill</button>` : ''}
+              <td style="font-weight:700;color:var(--dd-text)">${o.id}</td>
+              <td style="color:var(--dd-text-secondary);font-weight:500">${customer ? escapeHtml(customer.name) : 'Walk-in'}</td>
+              <td><span class="badge badge-channel">${o.orderType}</span></td>
+              <td style="color:var(--dd-text-secondary)">${o.itemCount || (o.items ? o.items.reduce((s,i)=>s+i.quantity,0) : 1)}</td>
+              <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(o.total)}</td>
+              <td><span class="badge ${payClass}">${o.paymentStatus.toUpperCase()}</span></td>
+              <td><span class="badge ${statClass}">${o.status.toUpperCase()}</span></td>
+              <td style="font-size:12.5px;color:var(--dd-text-muted)">${formatTime(o.createdAt)}</td>
+              <td style="text-align:right">
+                ${o.paymentStatus === 'Unpaid' ? `<a href="#billing" onclick="store.state.currentBillingOrder=store.state.orders.find(o=>o.id==='${o.id}');navigate('billing');return false;" style="color:var(--dd-primary);font-weight:600;font-size:13px;text-decoration:none">Bill</a>` : ''}
               </td>
             </tr>`;
           }).join('')}
         </tbody>
       </table>
-      <div class="data-table-footer"><span>Showing ${filtered.length} of ${orders.length} orders</span></div>
+      <div class="data-table-footer" style="padding:12px 20px;font-size:12px;color:var(--dd-text-muted)">
+        <span>Showing ${filtered.length} of ${orders.length} orders</span>
+      </div>
     </div>
   `;
 
   document.getElementById('orderStatusFilter')?.addEventListener('change', (e) => {
-    window._orderStatusFilter = e.target.value;
+    window._orderStatusFilter = e.target.value === 'All statuses' ? 'All' : e.target.value;
     renderOrders(container);
   });
 
@@ -1437,7 +2456,7 @@ function renderOrders(container) {
 }
 
 // ==========================================
-// PAGE: Menu Management
+// PAGE: Menu Management (Screenshot 08 Specification)
 // ==========================================
 function renderMenu(container) {
   const items = store.state.menuItems;
@@ -1445,70 +2464,99 @@ function renderMenu(container) {
   const filtered = catFilter === 'all' ? items : items.filter(i => i.category === catFilter);
 
   container.innerHTML = `
-    <div class="page-header">
-      <h2 class="page-title">Menu Management</h2>
-      <button class="btn btn-primary" id="addMenuItemBtn">${icon('plus', 16)} Add Item</button>
-    </div>
-    <div class="filter-bar">
-      ${CATEGORIES.map(c => `<span class="tab-pill ${catFilter === c.id ? 'active' : ''}" data-menu-cat="${c.id}">${c.emoji} ${c.name}</span>`).join('')}
-    </div>
-    <div class="data-table-container">
-      <div class="data-table-header">
-        <div class="data-table-search">${icon('search', 16)}<input type="text" placeholder="Search menu items..." id="menuSearchInput"></div>
+    <div class="menu-page" style="display:flex;flex-direction:column;gap:16px;width:100%;min-width:0">
+      <!-- Page Header -->
+      <div class="page-header" style="margin-bottom:0">
+        <div class="page-header-content">
+          <h2 class="page-title">Menu Management</h2>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" id="addMenuItemBtn" style="border-radius:var(--radius-full);padding:0 18px;height:38px">
+            ${icon('plus', 14)} Add Item
+          </button>
+        </div>
       </div>
-      <table class="data-table">
-        <thead><tr><th></th><th>Name</th><th>Category</th><th>Price</th><th>Prep Time</th><th>Available</th><th>Actions</th></tr></thead>
-        <tbody>
-          ${filtered.map(item => `
+
+      <!-- Category Outline Pills Bar -->
+      <div class="category-pills-bar">
+        <button class="category-pill-btn ${catFilter === 'all' ? 'active' : ''}" data-menu-cat="all">
+          <span>🍽️</span> All Items
+        </button>
+        ${CATEGORIES.filter(c => c.id !== 'all').map(c => `
+          <button class="category-pill-btn ${catFilter === c.id ? 'active' : ''}" data-menu-cat="${c.id}">
+            <span>${c.emoji}</span> ${c.name}
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- Main Data Table Container -->
+      <div class="data-table-container">
+        <div class="data-table-header" style="padding:16px 20px">
+          <div class="pill-search-wrap">
+            ${icon('search', 15)}
+            <input type="text" class="pill-search-input" placeholder="Search menu items..." id="menuSearchInput">
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
             <tr>
-              <td style="font-size:24px">${item.emoji}</td>
-              <td style="font-weight:var(--font-weight-semibold)">${escapeHtml(item.name)}</td>
-              <td><span class="badge badge-neutral">${CATEGORIES.find(c => c.id === item.category)?.name || item.category}</span></td>
-              <td>${formatINR(item.price)}</td>
-              <td>${item.prepTime} min</td>
-              <td>
-                <label class="toggle">
-                  <input type="checkbox" ${item.available ? 'checked' : ''} data-toggle-item="${item.id}">
-                  <span class="toggle-slider"></span>
-                </label>
-              </td>
-              <td>
-                <button class="btn btn-ghost btn-sm btn-icon" data-edit-item="${item.id}">${icon('edit', 16)}</button>
-                <button class="btn btn-ghost btn-sm btn-icon" data-delete-item="${item.id}" style="color:var(--color-error)">${icon('trash', 16)}</button>
-              </td>
+              <th>NAME</th>
+              <th>CATEGORY</th>
+              <th>PRICE</th>
+              <th>PREP TIME</th>
+              <th>AVAILABLE</th>
+              <th style="text-align:right">ACTIONS</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${filtered.map(i => `
+              <tr data-menu-id="${i.id}">
+                <td>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <img src="${i.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100'}" alt="${escapeHtml(i.name)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--dd-border)">
+                    <span style="font-weight:600;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-channel" style="text-transform:capitalize">${i.category}</span></td>
+                <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(i.price)}</td>
+                <td style="color:var(--dd-text-secondary);font-size:13px">${i.prepTime || 15} min</td>
+                <td>
+                  <label class="toggle-switch">
+                    <input type="checkbox" class="menu-available-toggle" data-item-id="${i.id}" ${i.available !== false ? 'checked' : ''}>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </td>
+                <td style="text-align:right">
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="showMenuItemForm(store.state.menuItems.find(x=>x.id==='${i.id}'))" title="Edit Item" style="color:var(--dd-text-muted)">${icon('edit', 14)}</button>
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="store.deleteMenuItem('${i.id}');renderMenu(document.getElementById('pageContent'));showToast('Item deleted','info')" title="Delete Item" style="color:#DC2626">${icon('trash', 14)}</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
   `;
 
+  // Bind category clicks
   document.querySelectorAll('[data-menu-cat]').forEach(el => {
-    el.addEventListener('click', () => { window._menuCatFilter = el.dataset.menuCat; renderMenu(container); });
-  });
-
-  document.querySelectorAll('[data-toggle-item]').forEach(el => {
-    el.addEventListener('change', () => { store.toggleMenuItemAvailability(el.dataset.toggleItem); });
-  });
-
-  document.querySelectorAll('[data-delete-item]').forEach(el => {
     el.addEventListener('click', () => {
-      showConfirmDialog('Delete Item', 'Are you sure you want to delete this menu item?', () => {
-        store.deleteMenuItem(el.dataset.deleteItem);
-        showToast('Menu item deleted', 'warning');
-        renderMenu(container);
-      });
+      window._menuCatFilter = el.dataset.menuCat;
+      renderMenu(container);
+    });
+  });
+
+  // Toggle availability
+  document.querySelectorAll('.menu-available-toggle').forEach(el => {
+    el.addEventListener('change', (e) => {
+      const id = e.target.dataset.itemId;
+      store.toggleMenuItemAvailability(id);
+      showToast('Menu item availability updated', 'info');
     });
   });
 
   document.getElementById('addMenuItemBtn')?.addEventListener('click', () => showMenuItemForm());
-
-  document.querySelectorAll('[data-edit-item]').forEach(el => {
-    el.addEventListener('click', () => {
-      const item = store.state.menuItems.find(i => i.id === el.dataset.editItem);
-      if (item) showMenuItemForm(item);
-    });
-  });
 
   document.getElementById('menuSearchInput')?.addEventListener('input', debounce((e) => {
     const q = e.target.value.toLowerCase();
@@ -1518,64 +2566,53 @@ function renderMenu(container) {
   }, 200));
 }
 
-function showMenuItemForm(item = null) {
-  const isEdit = !!item;
-  showModal(isEdit ? 'Edit Menu Item' : 'Add Menu Item', `
-    <form id="menuItemForm">
-      <div class="form-group"><label class="form-label">Name</label><input class="form-input" name="name" value="${item?.name || ''}" required></div>
-      <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" type="number" name="price" value="${item?.price || ''}" required min="1"></div>
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-select" name="category" required>
-          ${CATEGORIES.filter(c=>c.id!=='all').map(c => `<option value="${c.id}" ${item?.category===c.id?'selected':''}>${c.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Prep Time (min)</label><input class="form-input" type="number" name="prepTime" value="${item?.prepTime || 10}" min="1"></div>
-      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" name="description">${item?.description || ''}</textarea></div>
-    </form>
-  `, () => {
-    const form = document.getElementById('menuItemForm');
-    const data = Object.fromEntries(new FormData(form));
-    if (!data.name || !data.price) { showToast('Please fill all required fields', 'error'); return; }
-    const emoji = CATEGORIES.find(c => c.id === data.category)?.emoji || '🍽️';
-    if (isEdit) {
-      store.updateMenuItem(item.id, { ...data, price: parseFloat(data.price), prepTime: parseInt(data.prepTime), emoji });
-      showToast('Menu item updated', 'success');
-    } else {
-      store.addMenuItem({ ...data, price: parseFloat(data.price), prepTime: parseInt(data.prepTime), emoji, available: true });
-      showToast('Menu item added', 'success');
-    }
-    closeModal();
-    renderMenu(document.getElementById('pageContent'));
-  });
-}
-
 // ==========================================
-// PAGE: Customers
+// PAGE: Customers (Screenshot 09 Specification)
 // ==========================================
 function renderCustomers(container) {
   const customers = store.state.customers;
 
   container.innerHTML = `
-    <div class="page-header">
+    <div class="page-header" style="margin-bottom:16px">
       <h2 class="page-title">Customers</h2>
-      <button class="btn btn-primary" id="addCustomerBtn">${icon('plus', 16)} Add Customer</button>
+      <button class="btn btn-primary" id="addCustomerBtn" style="border-radius:var(--radius-full);padding:0 18px;height:38px">
+        ${icon('plus', 14)} Add Customer
+      </button>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header">
-        <div class="data-table-search">${icon('search', 16)}<input type="text" placeholder="Search customers..." id="custSearchInput"></div>
+      <div class="data-table-header" style="padding:16px 20px">
+        <div class="pill-search-wrap">
+          ${icon('search', 15)}
+          <input type="text" class="pill-search-input" placeholder="Search customers..." id="custSearchInput">
+        </div>
       </div>
       <table class="data-table">
-        <thead><tr><th>Name</th><th>Phone</th><th>Orders</th><th>Total Spend</th><th>Loyalty Points</th><th>Last Visit</th><th>Preferred</th></tr></thead>
+        <thead>
+          <tr>
+            <th>NAME</th>
+            <th>PHONE</th>
+            <th>ORDERS</th>
+            <th>TOTAL SPEND</th>
+            <th>LOYALTY</th>
+            <th>LAST VISIT</th>
+            <th>PREFERRED</th>
+          </tr>
+        </thead>
         <tbody>
           ${customers.map(c => `
             <tr>
-              <td><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="avatar avatar-sm" style="background:hsl(${c.name.length*30},60%,45%)">${getInitials(c.name)}</div><span style="font-weight:var(--font-weight-semibold)">${escapeHtml(c.name)}</span></div></td>
-              <td>${c.phone}</td>
-              <td>${c.orderCount}</td>
-              <td style="font-weight:var(--font-weight-semibold)">${formatINR(c.totalSpend)}</td>
-              <td><span class="badge badge-primary">${c.loyaltyPoints} pts</span></td>
-              <td style="font-size:var(--font-size-sm);color:var(--color-text-tertiary)">${formatDate(c.lastVisit)}</td>
-              <td><span class="badge badge-neutral">${c.preferredOrderType}</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="avatar-circle-init">${getInitials(c.name)}</div>
+                  <span style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(c.name)}</span>
+                </div>
+              </td>
+              <td style="color:var(--dd-text-secondary);font-size:13px">${c.phone}</td>
+              <td style="color:var(--dd-text-secondary);font-size:13px">${c.orderCount}</td>
+              <td style="font-weight:700;font-family:var(--dd-font-mono);color:var(--dd-text)">${formatINR(c.totalSpend)}</td>
+              <td><span class="badge badge-loyalty">${c.loyaltyPoints} pts</span></td>
+              <td style="font-size:12.5px;color:var(--dd-text-secondary)">${formatDate(c.lastVisit)}</td>
+              <td><span class="badge badge-channel">${c.preferredOrderType}</span></td>
             </tr>
           `).join('')}
         </tbody>
@@ -1613,7 +2650,7 @@ function renderCustomers(container) {
 }
 
 // ==========================================
-// PAGE: Reports
+// PAGE: Reports & Analytics
 // ==========================================
 function renderReports(container) {
   container.innerHTML = `
@@ -1646,7 +2683,7 @@ function renderReports(container) {
     if (hrCtx) {
       chartInstances.hourly = new Chart(hrCtx, {
         type: 'bar',
-        data: { labels: hourlyRevenueData.labels, datasets: [{ label: 'Revenue', data: hourlyRevenueData.values, backgroundColor: '#6366F1', borderRadius: 4, barThickness: 24 }] },
+        data: { labels: hourlyRevenueData.labels, datasets: [{ label: 'Revenue', data: hourlyRevenueData.values, backgroundColor: '#4F46E5', borderRadius: 4, barThickness: 24 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => formatINRShort(v) } }, x: { grid: { display: false } } } }
       });
     }
@@ -1654,7 +2691,7 @@ function renderReports(container) {
     if (pmCtx) {
       chartInstances.payment = new Chart(pmCtx, {
         type: 'doughnut',
-        data: { labels: ['Cash', 'Card', 'UPI'], datasets: [{ data: [35, 28, 37], backgroundColor: ['#10B981', '#6366F1', '#F59E0B'], borderWidth: 0 }] },
+        data: { labels: ['Cash', 'Card', 'UPI'], datasets: [{ data: [35, 28, 37], backgroundColor: ['#10B981', '#4F46E5', '#F59E0B'], borderWidth: 0 }] },
         options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
       });
     }
@@ -1670,36 +2707,53 @@ function renderReports(container) {
 }
 
 // ==========================================
-// PAGE: Inventory
+// PAGE: Inventory (Screenshot 10 Specification)
 // ==========================================
 function renderInventory(container) {
   const items = store.state.inventory;
+  const lowCount = items.filter(i => i.status === 'Low Stock').length;
+  const outCount = items.filter(i => i.status === 'Out of Stock').length;
 
   container.innerHTML = `
-    <div class="page-header">
+    <div class="page-header" style="margin-bottom:16px">
       <h2 class="page-title">Inventory</h2>
-      <button class="btn btn-primary">${icon('plus', 16)} Add Item</button>
+      <button class="btn btn-primary" id="addInventoryBtn" style="border-radius:var(--radius-full);padding:0 18px;height:38px">
+        ${icon('plus', 14)} Add Item
+      </button>
     </div>
     <div class="data-table-container">
-      <div class="data-table-header">
-        <div class="data-table-search">${icon('search', 16)}<input type="text" placeholder="Search inventory..." id="invSearchInput"></div>
-        <div class="data-table-actions">
-          <span class="badge badge-warning badge-dot">Low Stock: ${items.filter(i=>i.status==='Low Stock').length}</span>
-          <span class="badge badge-error badge-dot">Out of Stock: ${items.filter(i=>i.status==='Out of Stock').length}</span>
+      <div class="data-table-header" style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+        <div class="pill-search-wrap">
+          ${icon('search', 15)}
+          <input type="text" class="pill-search-input" placeholder="Search inventory..." id="invSearchInput">
+        </div>
+        <div class="data-table-actions" style="display:flex;gap:8px">
+          <span class="badge-stock-low">● Low Stock: ${lowCount}</span>
+          <span class="badge-stock-out">● Out of Stock: ${outCount}</span>
         </div>
       </div>
       <table class="data-table">
-        <thead><tr><th>Item</th><th>Category</th><th>Stock</th><th>Unit</th><th>Reorder Level</th><th>Supplier</th><th>Status</th></tr></thead>
+        <thead>
+          <tr>
+            <th>ITEM</th>
+            <th>CATEGORY</th>
+            <th>STOCK UNIT</th>
+            <th>REORDER LEVEL SUPPLIER</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
         <tbody>
           ${items.map(i => `
             <tr>
-              <td style="font-weight:var(--font-weight-semibold)">${escapeHtml(i.name)}</td>
-              <td><span class="badge badge-neutral">${i.category}</span></td>
-              <td style="font-weight:var(--font-weight-semibold)">${i.currentStock}</td>
-              <td>${i.unit}</td>
-              <td>${i.reorderLevel}</td>
-              <td style="color:var(--color-text-secondary)">${i.supplier}</td>
-              <td><span class="badge ${i.status==='In Stock'?'badge-success':i.status==='Low Stock'?'badge-warning':'badge-error'} badge-dot">${i.status}</span></td>
+              <td style="font-weight:700;color:var(--dd-text);font-size:13.5px">${escapeHtml(i.name)}</td>
+              <td><span class="badge badge-channel">${i.category}</span></td>
+              <td><strong style="font-size:14px;color:var(--dd-text)">${i.currentStock}</strong><span style="font-size:12px;color:var(--dd-text-secondary)">${i.unit}</span></td>
+              <td style="color:var(--dd-text-secondary);font-size:13px">${i.reorderLevel}${i.supplier}</td>
+              <td>
+                <span class="badge ${i.status==='In Stock' ? 'badge-order-paid' : i.status==='Low Stock' ? 'badge-stock-low' : 'badge-stock-out'}" style="font-weight:600;font-size:11px">
+                  ${i.status}
+                </span>
+              </td>
             </tr>
           `).join('')}
         </tbody>
@@ -1748,54 +2802,172 @@ function renderStaff(container) {
 }
 
 // ==========================================
-// PAGE: Settings
+// PAGE: Settings (Figma Node 21:14281)
 // ==========================================
 function renderSettings(container) {
   const s = store.state.settings;
 
   container.innerHTML = `
-    <div class="page-header"><h2 class="page-title">Settings</h2></div>
-    <div class="settings-layout">
-      <div class="settings-nav">
-        <div class="settings-nav-item active">${icon('settings', 16)} Restaurant Info</div>
-        <div class="settings-nav-item">${icon('receipt', 16)} Tax & Billing</div>
-        <div class="settings-nav-item">${icon('creditCard', 16)} Payment Methods</div>
-        <div class="settings-nav-item">${icon('grid', 16)} Tables</div>
-        <div class="settings-nav-item">${icon('chefHat', 16)} Kitchen</div>
-        <div class="settings-nav-item">${icon('bell', 16)} Notifications</div>
-        <div class="settings-nav-item">${icon('users', 16)} Staff & Roles</div>
-        <div class="settings-nav-item">${icon('user', 16)} Profile</div>
+    <!-- Page Header & Breadcrumbs -->
+    <div class="page-header" style="margin-bottom:var(--dd-space-5)">
+      <div class="page-header-content">
+        <div class="breadcrumb" style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dd-text-muted);margin-bottom:4px">
+          <span>Settings</span>
+          <span>/</span>
+          <span style="color:var(--dd-primary);font-weight:600">Restaurant Info</span>
+        </div>
+        <h2 class="page-title" style="font-size:24px;font-weight:700;letter-spacing:-0.4px">Settings</h2>
       </div>
-      <div class="settings-content">
-        <div class="settings-section-title">Restaurant Information</div>
-        <form id="settingsForm">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-            <div class="form-group"><label class="form-label">Restaurant Name</label><input class="form-input" value="${escapeHtml(s.restaurantName)}"></div>
-            <div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="${s.phone}"></div>
-            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="${s.email}"></div>
-            <div class="form-group"><label class="form-label">GST Number</label><input class="form-input" value="${s.gstNumber}"></div>
+    </div>
+
+    <!-- 2-Column Settings Layout (Figma Node 21:14281) -->
+    <div class="settings-layout">
+      <!-- Left: Settings Sub-Navigation Column -->
+      <div class="settings-nav">
+        <div class="settings-nav-header">
+          <span>PREFERENCES</span>
+        </div>
+        <div class="settings-nav-list">
+          <button class="settings-nav-item active" data-settings-tab="restaurant-info">
+            <span class="settings-nav-icon">${icon('store', 16)}</span>
+            <span class="settings-nav-label">Restaurant Info</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="tax-billing">
+            <span class="settings-nav-icon">${icon('receipt', 16)}</span>
+            <span class="settings-nav-label">Tax & Billing</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="payment-methods">
+            <span class="settings-nav-icon">${icon('creditCard', 16)}</span>
+            <span class="settings-nav-label">Payment Methods</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="tables">
+            <span class="settings-nav-icon">${icon('grid', 16)}</span>
+            <span class="settings-nav-label">Tables</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="kitchen">
+            <span class="settings-nav-icon">${icon('chefHat', 16)}</span>
+            <span class="settings-nav-label">Kitchen</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="notifications">
+            <span class="settings-nav-icon">${icon('bell', 16)}</span>
+            <span class="settings-nav-label">Notifications</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="staff-roles">
+            <span class="settings-nav-icon">${icon('users', 16)}</span>
+            <span class="settings-nav-label">Staff & Roles</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="profile">
+            <span class="settings-nav-icon">${icon('user', 16)}</span>
+            <span class="settings-nav-label">Profile</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Main Card Content -->
+      <div class="settings-content-card">
+        <div class="settings-card-header">
+          <div>
+            <h3 class="settings-card-title">Restaurant Information</h3>
+            <p class="settings-card-subtitle">Manage your restaurant brand identity, contact information, GST registration, and currency settings.</p>
           </div>
-          <div class="form-group"><label class="form-label">Address</label><textarea class="form-textarea" rows="2">${escapeHtml(s.address)}</textarea></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-            <div class="form-group"><label class="form-label">Tax Rate (%)</label><input class="form-input" type="number" value="${s.taxRate * 100}" step="0.5"></div>
-            <div class="form-group"><label class="form-label">Currency</label><select class="form-select"><option selected>INR (₹)</option><option>USD ($)</option></select></div>
+        </div>
+
+        <div class="settings-card-divider"></div>
+
+        <form id="restaurantSettingsForm" class="settings-form">
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="settingRestName">Restaurant Name</label>
+              <input class="form-input" id="settingRestName" name="restaurantName" value="${escapeHtml(s.restaurantName)}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="settingPhone">Phone Number</label>
+              <input class="form-input" id="settingPhone" name="phone" value="${escapeHtml(s.phone)}" required>
+            </div>
           </div>
-          <div style="display:flex;gap:var(--space-3);margin-top:var(--space-4)">
-            <button type="button" class="btn btn-primary" onclick="showToast('Settings saved successfully!','success')">${icon('save', 16)} Save Changes</button>
-            <button type="button" class="btn btn-secondary">Cancel</button>
+
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="settingEmail">Email Address</label>
+              <input class="form-input" type="email" id="settingEmail" name="email" value="${escapeHtml(s.email)}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="settingGst">GST Number / Tax ID</label>
+              <input class="form-input" id="settingGst" name="gstNumber" value="${escapeHtml(s.gstNumber)}" placeholder="e.g. 29AABCD1234E1Z5">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settingAddress">Physical Address</label>
+            <textarea class="form-textarea" id="settingAddress" name="address" rows="2">${escapeHtml(s.address)}</textarea>
+          </div>
+
+          <div class="form-grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="settingTaxRate">Default Tax Rate (%)</label>
+              <div class="input-with-suffix">
+                <input class="form-input" type="number" id="settingTaxRate" name="taxRate" value="${s.taxRate * 100}" step="0.5" min="0" max="30">
+                <span class="input-suffix">%</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="settingCurrency">Primary Currency</label>
+              <select class="form-select" id="settingCurrency" name="currency">
+                <option value="INR" ${s.currency==='INR'?'selected':''}>INR (₹) — Indian Rupee</option>
+                <option value="USD" ${s.currency==='USD'?'selected':''}>USD ($) — US Dollar</option>
+                <option value="EUR" ${s.currency==='EUR'?'selected':''}>EUR (€) — Euro</option>
+                <option value="GBP" ${s.currency==='GBP'?'selected':''}>GBP (£) — British Pound</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-form-actions">
+            <button type="submit" class="btn btn-primary" id="saveSettingsBtn">
+              ${icon('save', 16)} Save Changes
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelSettingsBtn">
+              Cancel
+            </button>
           </div>
         </form>
       </div>
     </div>
   `;
 
-  // Settings tab switching
+  // Settings sub-navigation click handling
   document.querySelectorAll('.settings-nav-item').forEach(el => {
     el.addEventListener('click', () => {
       document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
       el.classList.add('active');
-      showToast('Settings section: ' + el.textContent.trim(), 'info');
+      const tabName = el.querySelector('.settings-nav-label')?.textContent || 'Restaurant Info';
+      const breadcrumbCurrent = document.querySelector('.breadcrumb span:last-child');
+      if (breadcrumbCurrent) breadcrumbCurrent.textContent = tabName;
+      showToast(`Switched to ${tabName} settings`, 'info');
     });
+  });
+
+  // Settings form submission
+  document.getElementById('restaurantSettingsForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updates = {
+      restaurantName: formData.get('restaurantName'),
+      phone: formData.get('phone'),
+      email: formData.get('email'),
+      gstNumber: formData.get('gstNumber'),
+      address: formData.get('address'),
+      taxRate: (parseFloat(formData.get('taxRate')) || 5) / 100,
+      currency: formData.get('currency')
+    };
+
+    store.updateSettings(updates);
+    showToast('Restaurant settings updated successfully!', 'success');
+  });
+
+  // Cancel button
+  document.getElementById('cancelSettingsBtn')?.addEventListener('click', () => {
+    renderSettings(container);
+    showToast('Settings changes reverted', 'info');
   });
 }
 
@@ -2143,6 +3315,80 @@ function closeModal() {
   }
 }
 
+// ==========================================
+// Global Slide Drawer & Empty State Helpers
+// ==========================================
+function showDrawer(title, bodyContent, footerContent = '') {
+  closeDrawer();
+  const overlay = document.createElement('div');
+  overlay.className = 'drawer-overlay';
+  overlay.id = 'globalDrawerOverlay';
+
+  const drawer = document.createElement('div');
+  drawer.className = 'drawer';
+  drawer.id = 'globalDrawer';
+
+  drawer.innerHTML = `
+    <div class="drawer-header">
+      <h3 class="drawer-title">${title}</h3>
+      <button class="drawer-close" id="drawerCloseBtn" aria-label="Close drawer">${icon('x', 18)}</button>
+    </div>
+    <div class="drawer-body">${bodyContent}</div>
+    ${footerContent ? `<div class="drawer-footer">${footerContent}</div>` : ''}
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(drawer);
+
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+    drawer.classList.add('active');
+  });
+
+  overlay.addEventListener('click', closeDrawer);
+  drawer.querySelector('#drawerCloseBtn')?.addEventListener('click', closeDrawer);
+}
+
+function closeDrawer() {
+  const overlay = document.getElementById('globalDrawerOverlay');
+  const drawer = document.getElementById('globalDrawer');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 250);
+  }
+  if (drawer) {
+    drawer.classList.remove('active');
+    setTimeout(() => drawer.remove(), 250);
+  }
+}
+
+function renderEmptyState(options = {}) {
+  const {
+    iconName = 'package',
+    title = 'No items found',
+    description = 'There are no items to display right now.',
+    actionText = '',
+    actionNav = '',
+    actionId = '',
+    glass = true
+  } = options;
+
+  return `
+    <div class="empty-state ${glass ? 'glass' : ''}">
+      <div class="empty-state-icon">${icon(iconName, 24)}</div>
+      <h3 class="empty-state-title">${escapeHtml(title)}</h3>
+      <div class="empty-state-text">${escapeHtml(description)}</div>
+      ${actionText ? `
+        <div class="empty-state-action">
+          <button class="btn btn-primary btn-sm" ${actionId ? `id="${actionId}"` : ''} ${actionNav ? `onclick="navigate('${actionNav}')"` : ''}>
+            ${icon('plus', 14)} ${escapeHtml(actionText)}
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 function showConfirmDialog(title, message, onConfirm) {
   showModal(title, `
     <div class="confirm-dialog">
@@ -2167,12 +3413,15 @@ function renderExpenses(container) {
         <button class="btn btn-primary" disabled>${icon('plus', 16)} Add Expense</button>
       </div>
     </div>
-    <div class="card" style="padding:var(--space-16)">
-      <div class="empty-state">
-        <div class="empty-state-icon">${icon('banknote', 48)}</div>
-        <h3 class="empty-state-title">Expense Tracking Coming Soon</h3>
-        <div class="empty-state-text">Full expense management with categories, vendor tracking, recurring expenses, and P&L reports will be available in the next update.</div>
-      </div>
+    <div class="card" style="padding:var(--space-8)">
+      ${renderEmptyState({
+        iconName: 'banknote',
+        title: 'Expense Management Module',
+        description: 'Vendor expense tracking, recurring cost allocations, and automated GST ledger integration will be accessible here.',
+        actionText: 'Back to Dashboard',
+        actionNav: 'dashboard',
+        glass: true
+      })}
     </div>
   `;
 }
@@ -2183,8 +3432,18 @@ function renderExpenses(container) {
 window.navigate = navigate;
 window.store = store;
 window.closeModal = closeModal;
+window.showModal = showModal;
 window.showToast = showToast;
 window.formatINR = formatINR;
+window.showDrawer = showDrawer;
+window.closeDrawer = closeDrawer;
+window.openTableDrawer = openTableDrawer;
+window.showTableDetail = showTableDetail;
+window.renderTables = renderTables;
+window.renderDashboard = renderDashboard;
+window.renderKitchen = renderKitchen;
+window.renderPOS = renderPOS;
+window.renderOrders = renderOrders;
 
 // ==========================================
 // Initialize Application

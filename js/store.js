@@ -319,6 +319,12 @@ class Store {
     this._notify('notifications');
   }
 
+  // ---- Settings ----
+  updateSettings(updates) {
+    Object.assign(this._state.settings, updates);
+    this._notify('settings');
+  }
+
   // ---- Dashboard Metrics ----
   getDashboardMetrics() {
     const today = new Date().toISOString().split('T')[0];
